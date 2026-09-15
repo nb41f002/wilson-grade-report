@@ -1,12 +1,42 @@
 /**
- * 資料儲存、加權試算、JSON 匯出入
+ * 資料儲存、加權試算、JSON 匯出入、操行等級遷移
  */
 const STORAGE_KEY = 'wilson_grade_report_data_v2';
+
+const CONDUCT_LEVELS = ['ee', 'me', 'ae', 'be'];
+const CONDUCT_MIGRATE = {
+  excellent: 'ee',
+  good: 'me',
+  satisfactory: 'ae',
+  'needs-improvement': 'be',
+  warning: 'be',
+  ee: 'ee',
+  me: 'me',
+  ae: 'ae',
+  be: 'be'
+};
 
 window.DataStore = {
   data: null,
   saveTimeout: null,
   listeners: [],
+  CONDUCT_LEVELS,
+
+  migrateConductLevel(val) {
+    if (val == null || val === '') return 'ee';
+    const key = String(val).toLowerCase().trim();
+    return CONDUCT_MIGRATE[key] || 'me';
+  },
+
+  migrateConduct(conduct) {
+    const c = conduct && typeof conduct === 'object' ? conduct : {};
+    return {
+      performance: this.migrateConductLevel(c.performance),
+      teamwork: this.migrateConductLevel(c.teamwork),
+      assignment: this.migrateConductLevel(c.assignment),
+      behavior: this.migrateConductLevel(c.behavior)
+    };
+  },
 
   async init() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -78,11 +108,25 @@ window.DataStore = {
     }));
     if (!Array.isArray(d.students)) d.students = [];
     d.students = d.students.map((stu, i) => this.normalizeStudent(stu, i));
+    if (d.locale !== 'en' && d.locale !== 'zh') d.locale = undefined;
     return d;
   },
 
   normalizeStudent(stu, i) {
     const s = stu || {};
+    const grades = {};
+    const rawGrades = s.grades && typeof s.grades === 'object' ? s.grades : {};
+    Object.keys(rawGrades).forEach((subjId) => {
+      const g = rawGrades[subjId] || {};
+      grades[subjId] = {
+        midterm: g.midterm !== undefined ? g.midterm : '',
+        daily: g.daily !== undefined ? g.daily : '',
+        overall: g.overall !== undefined ? g.overall : '',
+        isManualOverall: !!g.isManualOverall,
+        conduct: this.migrateConduct(g.conduct),
+        comment: g.comment || ''
+      };
+    });
     return {
       id: s.id || ('s_' + Date.now() + '_' + i),
       seatNo: s.seatNo || String(i + 1).padStart(2, '0'),
@@ -96,7 +140,7 @@ window.DataStore = {
         ixlNote: false,
         mapPrintNote: false
       }, s.flags || {}),
-      grades: s.grades && typeof s.grades === 'object' ? s.grades : {}
+      grades
     };
   },
 
@@ -149,17 +193,17 @@ window.DataStore = {
         grades: {
           la: {
             midterm: 83, daily: 93, overall: 88, isManualOverall: true,
-            conduct: { performance: 'excellent', teamwork: 'excellent', assignment: 'excellent', behavior: 'excellent' },
+            conduct: { performance: 'ee', teamwork: 'ee', assignment: 'ee', behavior: 'ee' },
             comment: 'Alice is a highly motivated, patient, attentive, and capable learner. She shows good concentration during lessons and has developed effective study habits. She is a little quiet sometimes, but her answers are almost all correct.'
           },
           math: {
             midterm: 100, daily: 90, overall: 95, isManualOverall: false,
-            conduct: { performance: 'excellent', teamwork: 'excellent', assignment: 'excellent', behavior: 'excellent' },
+            conduct: { performance: 'ee', teamwork: 'ee', assignment: 'ee', behavior: 'ee' },
             comment: 'Alice achieved a perfect score—wonderful work! She shows excellent understanding and works very carefully. Her effort is excellent. Keep it up!'
           },
           wss: {
             midterm: 88, daily: 92, overall: 90, isManualOverall: false,
-            conduct: { performance: 'excellent', teamwork: 'excellent', assignment: 'excellent', behavior: 'excellent' },
+            conduct: { performance: 'ee', teamwork: 'ee', assignment: 'ee', behavior: 'ee' },
             comment: 'Alice has grown wonderfully this term. She is attentive, helpful, and her confidence in supporting both her own learning and that of her peers has strengthened noticeably.'
           }
         }

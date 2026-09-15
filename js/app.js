@@ -1,12 +1,22 @@
 /**
- * Wilson 雙語成績報告系統 — 主應用
+ * Wilson 雙語成績報告系統 — 主應用（EE/ME/AE/BE + i18n）
  */
+window.App = {
+  setLocale(locale) {
+    if (window.I18n) window.I18n.setLocale(locale);
+  },
+  onLocaleChange() { /* filled after DOM ready */ }
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   let currentStudentIndex = 0;
   let currentZoom = 0.72;
   let activeCommentTarget = null;
   let previewMode = 'current'; // current | all
 
+  const t = (key) => (window.I18n ? window.I18n.t(key) : key);
+
+  window.I18n.load();
   await window.DataStore.init();
 
   const $ = (id) => document.getElementById(id);
@@ -45,11 +55,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   function refreshSelector() {
     const students = window.DataStore.data.students;
     studentSelect.innerHTML = students.map((stu, idx) => {
-      const label = `${stu.seatNo ? stu.seatNo + ' ' : ''}${stu.chineseName || ''} ${stu.englishName || ''}`.trim() || `學生 ${idx + 1}`;
+      const label = `${stu.seatNo ? stu.seatNo + ' ' : ''}${stu.chineseName || ''} ${stu.englishName || ''}`.trim()
+        || `${t('studentFallback')} ${idx + 1}`;
       return `<option value="${idx}"${idx === currentStudentIndex ? ' selected' : ''}>${label}</option>`;
     }).join('');
     const prog = window.DataStore.countFilledStudents();
-    studentCounter.textContent = `${currentStudentIndex + 1} / ${students.length} 人 · 已填 ${prog.filled}`;
+    studentCounter.textContent = `${currentStudentIndex + 1} / ${students.length} ${t('studentsUnit')} · ${t('filledLabel')} ${prog.filled}`;
     const pct = students.length ? Math.round((prog.filled / students.length) * 100) : 0;
     if (progressFill) progressFill.style.width = pct + '%';
     $('btn-prev-student').disabled = currentStudentIndex <= 0;
@@ -59,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function ensureStudent() {
     if (!window.DataStore.data.students.length) {
       window.DataStore.data.students.push(window.DataStore.normalizeStudent({
-        chineseName: '新學生',
+        chineseName: t('newStudent'),
         englishName: 'Student',
         seatNo: '01'
       }, 0));
@@ -124,10 +135,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       overall: '',
       isManualOverall: false,
       conduct: {
-        performance: 'excellent',
-        teamwork: 'excellent',
-        assignment: 'excellent',
-        behavior: 'excellent'
+        performance: 'ee',
+        teamwork: 'ee',
+        assignment: 'ee',
+        behavior: 'ee'
       },
       comment: ''
     };
@@ -135,15 +146,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function renderConductPicker(subjId, dim, label, active) {
     const levels = [
-      { val: 'excellent', icon: '😀', tip: '優良' },
-      { val: 'good', icon: '🙂', tip: '良好' },
-      { val: 'satisfactory', icon: '😐', tip: '尚可' },
-      { val: 'needs-improvement', icon: '😟', tip: '加強' }
+      { val: 'ee', code: 'EE', tip: t('tipEE') },
+      { val: 'me', code: 'ME', tip: t('tipME') },
+      { val: 'ae', code: 'AE', tip: t('tipAE') },
+      { val: 'be', code: 'BE', tip: t('tipBE') }
     ];
+    const migrated = window.DataStore.migrateConductLevel(active);
     const btns = levels.map((l) =>
-      `<button type="button" class="emoji-btn${active === l.val || (active === 'warning' && l.val === 'needs-improvement') ? ' active' : ''}" data-subj="${subjId}" data-dim="${dim}" data-val="${l.val}" title="${l.tip}">${l.icon}</button>`
+      `<button type="button" class="level-btn level-${l.val}${migrated === l.val ? ' active' : ''}" data-subj="${subjId}" data-dim="${dim}" data-val="${l.val}" title="${l.tip}" aria-label="${l.tip}">${l.code}</button>`
     ).join('');
-    return `<div class="conduct-box"><div class="conduct-box-label">${label}</div><div class="emoji-btn-group">${btns}</div></div>`;
+    return `<div class="conduct-box"><div class="conduct-box-label">${label}</div><div class="level-btn-group">${btns}</div></div>`;
   }
 
   function renderSubjectCards() {
@@ -154,7 +166,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     subjectList.innerHTML = subjects.map((subj) => {
       const g = Object.assign(defaultGrade(), stu.grades[subj.id] || {});
+      if (g.conduct) g.conduct = window.DataStore.migrateConduct(g.conduct);
       if (!stu.grades[subj.id]) stu.grades[subj.id] = g;
+      else stu.grades[subj.id].conduct = g.conduct;
       const overall = window.DataStore.calculateOverall(g.midterm, g.daily, g.isManualOverall, g.overall);
       return `
         <article class="subject-card" data-card="${subj.id}">
@@ -163,33 +177,33 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <div class="score-row">
             <div class="score-field">
-              <label>期中考 ${weights.midterm}%</label>
+              <label>${t('labelMidterm')} ${weights.midterm}%</label>
               <input type="number" min="0" max="100" inputmode="numeric" class="score-input" data-field="midterm" data-subj="${subj.id}" value="${g.midterm !== '' && g.midterm !== undefined ? g.midterm : ''}" placeholder="0–100">
             </div>
             <div class="score-field">
-              <label>平時成績 ${weights.daily}%</label>
+              <label>${t('labelDaily')} ${weights.daily}%</label>
               <input type="number" min="0" max="100" inputmode="numeric" class="score-input" data-field="daily" data-subj="${subj.id}" value="${g.daily !== '' && g.daily !== undefined ? g.daily : ''}" placeholder="0–100">
             </div>
             <div class="score-field">
-              <label>總評 Overall</label>
+              <label>${t('labelOverall')}</label>
               <div class="overall-wrap">
                 <input type="number" min="0" max="100" class="score-input overall-input" data-field="overall" data-subj="${subj.id}" value="${overall !== '' ? overall : ''}" ${g.isManualOverall ? '' : 'readonly'}>
-                <label class="manual-chk"><input type="checkbox" data-manual="${subj.id}" ${g.isManualOverall ? 'checked' : ''}> 手動</label>
+                <label class="manual-chk"><input type="checkbox" data-manual="${subj.id}" ${g.isManualOverall ? 'checked' : ''}> ${t('chkManual')}</label>
               </div>
             </div>
           </div>
           <div class="conduct-picker-row">
-            ${renderConductPicker(subj.id, 'performance', '表現', g.conduct.performance)}
-            ${renderConductPicker(subj.id, 'teamwork', '合作', g.conduct.teamwork)}
-            ${renderConductPicker(subj.id, 'assignment', '作業', g.conduct.assignment)}
-            ${renderConductPicker(subj.id, 'behavior', '常規', g.conduct.behavior)}
+            ${renderConductPicker(subj.id, 'performance', t('dimPerformance'), g.conduct.performance)}
+            ${renderConductPicker(subj.id, 'teamwork', t('dimTeamwork'), g.conduct.teamwork)}
+            ${renderConductPicker(subj.id, 'assignment', t('dimAssignment'), g.conduct.assignment)}
+            ${renderConductPicker(subj.id, 'behavior', t('dimBehavior'), g.conduct.behavior)}
           </div>
           <div class="comment-block">
             <div class="comment-toolbar">
-              <label>教師評語 Teacher Assessment</label>
-              <button type="button" class="btn btn-sm btn-secondary btn-open-bank" data-subj="${subj.id}">📖 評語庫</button>
+              <label>${t('labelComment')}</label>
+              <button type="button" class="btn btn-sm btn-secondary btn-open-bank" data-subj="${subj.id}">${t('btnCommentBank')}</button>
             </div>
-            <textarea class="comment-textarea" data-subj="${subj.id}" rows="3" placeholder="點評語庫插入，或自行輸入…">${g.comment || ''}</textarea>
+            <textarea class="comment-textarea" data-subj="${subj.id}" rows="3" placeholder="${t('commentPlaceholder')}">${g.comment || ''}</textarea>
           </div>
         </article>
       `;
@@ -203,9 +217,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!stu.grades[subjId]) stu.grades[subjId] = defaultGrade();
     if (!stu.grades[subjId].conduct) {
       stu.grades[subjId].conduct = {
-        performance: 'excellent', teamwork: 'excellent',
-        assignment: 'excellent', behavior: 'excellent'
+        performance: 'ee', teamwork: 'ee',
+        assignment: 'ee', behavior: 'ee'
       };
+    } else {
+      stu.grades[subjId].conduct = window.DataStore.migrateConduct(stu.grades[subjId].conduct);
     }
     return stu.grades[subjId];
   }
@@ -256,12 +272,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
 
-    subjectList.querySelectorAll('.emoji-btn').forEach((btn) => {
+    subjectList.querySelectorAll('.level-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
-        const b = e.target.closest('.emoji-btn');
+        const b = e.target.closest('.level-btn');
         const g = ensureGrade(b.dataset.subj);
         g.conduct[b.dataset.dim] = b.dataset.val;
-        b.closest('.emoji-btn-group').querySelectorAll('.emoji-btn').forEach((x) => x.classList.remove('active'));
+        b.closest('.level-btn-group').querySelectorAll('.level-btn').forEach((x) => x.classList.remove('active'));
         b.classList.add('active');
         window.DataStore.saveDebounced();
         renderPreview();
@@ -298,6 +314,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       reportViewport.innerHTML = window.ReportRenderer.renderStudentReport(stu, schoolInfo, subjects);
     }
   }
+
+  window.App.onLocaleChange = () => {
+    refreshSelector();
+    renderSubjectCards();
+    renderPreview();
+    if (saveStatusText && !saveStatusText.textContent.includes(':')) {
+      saveStatusText.textContent = t('saveReady');
+    }
+  };
+
+  // —— Locale toggle ——
+  document.querySelectorAll('.locale-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      window.App.setLocale(btn.dataset.locale);
+    });
+  });
+  window.I18n.setLocale(window.I18n.locale);
 
   // —— 基本資料 ——
   ['input-chinese-name', 'input-english-name', 'input-class-grade', 'input-student-id'].forEach((id) => {
@@ -368,25 +401,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const seat = String(n).padStart(2, '0');
     students.push(window.DataStore.normalizeStudent({
       seatNo: seat,
-      chineseName: `學生${seat}`,
+      chineseName: `${t('studentFallback')}${seat}`,
       englishName: `Student ${seat}`,
       classGrade: students[0]?.classGrade || 'Grade 4 / 401'
     }, n - 1));
     currentStudentIndex = students.length - 1;
     window.DataStore.saveImmediate();
     loadStudentForm();
-    toast(`已新增學生 ${seat}`);
+    toast(`${t('toastAdded')} ${seat}`);
   });
   $('btn-delete-student').addEventListener('click', () => {
     const students = window.DataStore.data.students;
-    if (students.length <= 1) { alert('至少保留一位學生'); return; }
+    if (students.length <= 1) { alert(t('alertKeepOne')); return; }
     const stu = students[currentStudentIndex];
-    if (!confirm(`確定刪除「${stu.chineseName} ${stu.englishName}」？`)) return;
+    if (!confirm(`${t('confirmDelete')}「${stu.chineseName} ${stu.englishName}」？`)) return;
     students.splice(currentStudentIndex, 1);
     if (currentStudentIndex >= students.length) currentStudentIndex = students.length - 1;
     window.DataStore.saveImmediate();
     loadStudentForm();
-    toast('已刪除');
+    toast(t('toastDeleted'));
   });
 
   // —— 評語庫 ——
@@ -405,7 +438,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.DataStore.saveDebounced();
         renderPreview();
         closeCommentModal();
-        toast('已插入評語');
+        toast(t('toastInserted'));
       });
     });
   }
@@ -419,6 +452,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // —— 批次匯入 ——
   $('btn-batch-import').addEventListener('click', () => $('batch-modal').classList.add('active'));
   $('batch-modal-close').addEventListener('click', () => $('batch-modal').classList.remove('active'));
+  $('btn-batch-cancel').addEventListener('click', () => $('batch-modal').classList.remove('active'));
   $('btn-batch-submit').addEventListener('click', () => {
     const raw = $('batch-textarea').value.trim();
     if (!raw) return;
@@ -431,10 +465,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       let eName = '';
       if (/^\d+$/.test(parts[0])) {
         seatNo = String(parts[0]).padStart(2, '0');
-        cName = parts[1] || `學生${seatNo}`;
+        cName = parts[1] || `${t('studentFallback')}${seatNo}`;
         eName = parts.slice(2).join(' ') || '';
       } else {
-        cName = parts[0] || `學生${seatNo}`;
+        cName = parts[0] || `${t('studentFallback')}${seatNo}`;
         eName = parts.slice(1).join(' ') || '';
       }
       return window.DataStore.normalizeStudent({
@@ -447,7 +481,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadStudentForm();
     $('batch-modal').classList.remove('active');
     $('batch-textarea').value = '';
-    toast(`已匯入 ${newStudents.length} 位學生`);
+    toast(`${t('toastBatch')} ${newStudents.length}`);
   });
 
   // —— 列印 / 備份 ——
@@ -458,7 +492,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('btn-print-all').addEventListener('click', () => {
     const n = window.DataStore.data.students.length;
-    if (!confirm(`即將列印全班 ${n} 位學生成績單，確定？`)) return;
+    if (!confirm(`${t('confirmPrintAll')} ${n} ${t('confirmPrintAllQ')}`)) return;
     previewMode = 'all';
     renderPreview();
     setTimeout(() => {
@@ -469,7 +503,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('btn-export-json').addEventListener('click', () => {
     window.DataStore.exportJsonFile();
-    toast('已匯出 JSON 備份');
+    toast(t('toastExported'));
   });
   $('file-import-input').addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -478,18 +512,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       await window.DataStore.importJsonFile(file);
       currentStudentIndex = 0;
       loadStudentForm();
-      toast('匯入成功');
+      toast(t('toastImported'));
     } catch (err) {
-      alert('匯入失敗：' + err.message);
+      alert(t('importFail') + err.message);
     }
     e.target.value = '';
   });
   $('btn-reset-sample').addEventListener('click', async () => {
-    if (!confirm('載入示範資料（林詩穎 Alice）？目前資料會被覆蓋。')) return;
+    if (!confirm(t('confirmSample'))) return;
     await window.DataStore.resetToSample();
     currentStudentIndex = 0;
     loadStudentForm();
-    toast('已載入示範資料');
+    toast(t('toastSample'));
   });
 
   // —— 縮放 ——
@@ -499,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.DataStore.onChange((type) => {
     if (String(type).startsWith('saved:')) {
-      saveStatusText.textContent = '已自動暫存 ' + String(type).slice(6);
+      saveStatusText.textContent = t('saveAuto') + ' ' + String(type).slice(6);
     }
   });
 

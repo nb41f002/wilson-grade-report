@@ -42,3 +42,14 @@
 ## 驗收提示
 
 開啟 `index.html` → 應見 Alice 報表接近照片表結構 → 縮視窗確認表單可捲動 → 列印預覽應套用 `print.css`。
+
+---
+
+## 2026-09-16 更新（國際化介面 + EE/ME 等級）
+
+1. **移除笑臉**：輸入區與列印成績單改為 EE / ME / AE / BE 字母徽章（圓角 pill）。
+2. **等級遷移**：`store.normalize` 將 excellent→ee、good→me、satisfactory→ae、warning/needs-improvement→be；舊 localStorage v2 不崩潰。
+3. **繁中｜English**：新增 `js/i18n.js`；`App.setLocale` 重繪表單與預覽；locale 存 `wilson_grade_locale_v2`。zh 成績單表頭維持英主中輔；en 純英文欄名。表下附等級圖例。
+4. **溢出修正**：`.conduct-picker-row` 用 `minmax(0,1fr)` 網格 + `.level-btn-group { flex-wrap }`；窄卡 2×2；`min-width:0` / `overflow:hidden` 防止貼出白卡。
+5. **視覺**：海軍藍／白、圓角卡片、較大內距；列印徽章緊湊、`tr { break-inside:avoid }`。
+6. Alice 示範資料操行改為 `ee`（第二位樣本含 `me`）。

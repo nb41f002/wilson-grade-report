@@ -1,26 +1,20 @@
 /**
- * A4 橫式成績單渲染器（對齊實體照片結構）
+ * A4 橫式成績單渲染器 — EE/ME/AE/BE letter badges, bilingual headers
  */
 window.ReportRenderer = {
   CONDUCT_ORDER: ['performance', 'teamwork', 'assignment', 'behavior'],
-  CONDUCT_LABELS: {
-    performance: 'Performance',
-    teamwork: 'Teamwork',
-    assignment: 'Assignment',
-    behavior: 'Behavior'
-  },
 
-  getConductEmoji(level) {
-    const map = {
-      excellent: { icon: '😀', title: 'Excellent' },
-      good: { icon: '🙂', title: 'Good' },
-      satisfactory: { icon: '😐', title: 'Satisfactory' },
-      'needs-improvement': { icon: '😟', title: 'Needs Improvement' },
-      warning: { icon: '😟', title: 'Needs Improvement' }
-    };
-    const item = map[level];
-    if (!item) return '<span class="smiley smiley-empty">·</span>';
-    return `<span class="smiley smiley-${level}" title="${item.title}">${item.icon}</span>`;
+  getConductBadge(level) {
+    const raw = window.DataStore
+      ? window.DataStore.migrateConductLevel(level)
+      : ({ excellent: 'ee', good: 'me', satisfactory: 'ae', 'needs-improvement': 'be', warning: 'be' }[level] || level);
+    const code = String(raw || '').toUpperCase();
+    if (!['EE', 'ME', 'AE', 'BE'].includes(code)) {
+      return '<span class="conduct-badge conduct-empty">·</span>';
+    }
+    const tipKey = 'tip' + code;
+    const tip = (window.I18n && window.I18n.t(tipKey)) || code;
+    return `<span class="conduct-badge conduct-${code.toLowerCase()}" title="${this.escapeHtml(tip)}">${code}</span>`;
   },
 
   escapeHtml(str) {
@@ -29,6 +23,10 @@ window.ReportRenderer = {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  },
+
+  t(key) {
+    return (window.I18n && window.I18n.t(key)) || key;
   },
 
   /** 科目超過此數拆成兩頁（最多 2 頁） */
@@ -59,7 +57,7 @@ window.ReportRenderer = {
 
   renderStudentReport(student, schoolInfo, subjects) {
     const enabled = (subjects || []).filter((s) => s.enabled !== false);
-    const { pages, twoPages } = this.splitSubjects(enabled);
+    const { pages } = this.splitSubjects(enabled);
     const totalPages = pages.length;
     let html = '';
 
@@ -71,8 +69,9 @@ window.ReportRenderer = {
           ${this.renderHeader(schoolInfo, student, pageNum, totalPages)}
           <div class="report-body">
             ${this.renderTable(pageSubjects, student, schoolInfo)}
+            ${isLast ? this.renderLegend() : ''}
           </div>
-          ${isLast ? this.renderFooter(schoolInfo, student) : `<div class="page-continue">Continued on next page · Page ${pageNum} of ${totalPages}</div>`}
+          ${isLast ? this.renderFooter(schoolInfo, student) : `<div class="page-continue">${this.t('pageContinue')} ${pageNum} ${this.t('of')} ${totalPages}</div>`}
         </article>
       `;
     });
@@ -90,8 +89,8 @@ window.ReportRenderer = {
     const flags = this.mergeFlags(schoolInfo, student);
 
     const flagChips = [];
-    if (flags.internationalStudent) flagChips.push('<span class="flag-chip">國際生</span>');
-    if (flags.independentConduct) flagChips.push('<span class="flag-chip">操行 Independent</span>');
+    if (flags.internationalStudent) flagChips.push(`<span class="flag-chip">${this.escapeHtml(this.t('flagChipIntl'))}</span>`);
+    if (flags.independentConduct) flagChips.push(`<span class="flag-chip">${this.escapeHtml(this.t('flagChipConduct'))}</span>`);
 
     return `
       <header class="report-header">
@@ -130,8 +129,8 @@ window.ReportRenderer = {
         overall = g.overall;
       }
       const conduct = g.conduct || {};
-      const smileys = this.CONDUCT_ORDER.map((key) =>
-        `<td class="col-conduct">${this.getConductEmoji(conduct[key])}</td>`
+      const badges = this.CONDUCT_ORDER.map((key) =>
+        `<td class="col-conduct">${this.getConductBadge(conduct[key])}</td>`
       ).join('');
       const comment = this.escapeHtml(g.comment || '');
       const alt = i % 2 === 1 ? ' row-alt' : '';
@@ -142,7 +141,7 @@ window.ReportRenderer = {
           <td class="col-score col-midterm">${midterm}</td>
           <td class="col-score col-daily">${daily}</td>
           <td class="col-score col-overall">${overall}</td>
-          ${smileys}
+          ${badges}
           <td class="col-assessment"><div class="assessment-content">${comment}</div></td>
         </tr>
       `;
@@ -152,24 +151,39 @@ window.ReportRenderer = {
       <table class="report-table">
         <thead>
           <tr>
-            <th rowspan="2" class="th-subject">Subject</th>
-            <th class="th-score">Midterm Exam<br><span class="th-weight">${mWeight}%</span></th>
-            <th class="th-score">Daily Perf.<br><span class="th-weight">${dWeight}%</span></th>
-            <th rowspan="2" class="th-score th-overall">Overall<br>Grade</th>
-            <th colspan="4" class="th-conduct">Conduct</th>
-            <th rowspan="2" class="th-assessment">Teacher Assessment</th>
+            <th rowspan="2" class="th-subject">${this.t('thSubject')}</th>
+            <th class="th-score">${this.t('thMidterm')}<br><span class="th-weight">${mWeight}%</span></th>
+            <th class="th-score">${this.t('thDaily')}<br><span class="th-weight">${dWeight}%</span></th>
+            <th rowspan="2" class="th-score th-overall">${this.t('thOverall')}</th>
+            <th colspan="4" class="th-conduct">${this.t('thConduct')}</th>
+            <th rowspan="2" class="th-assessment">${this.t('thAssessment')}</th>
           </tr>
           <tr class="th-sub-row">
-            <th class="th-sub">Exam</th>
-            <th class="th-sub">Perf.</th>
-            <th class="th-conduct-sub">Performance</th>
-            <th class="th-conduct-sub">Teamwork</th>
-            <th class="th-conduct-sub">Assignment</th>
-            <th class="th-conduct-sub">Behavior</th>
+            <th class="th-sub">${this.t('thSubExam')}</th>
+            <th class="th-sub">${this.t('thSubPerf')}</th>
+            <th class="th-conduct-sub">${this.t('thPerf')}</th>
+            <th class="th-conduct-sub">${this.t('thTeam')}</th>
+            <th class="th-conduct-sub">${this.t('thAssign')}</th>
+            <th class="th-conduct-sub">${this.t('thBehav')}</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
       </table>
+    `;
+  },
+
+  renderLegend() {
+    return `
+      <div class="conduct-legend">
+        <span class="legend-title">${this.escapeHtml(this.t('legendTitle'))}:</span>
+        <span class="legend-item"><span class="conduct-badge conduct-ee">EE</span> ${this.escapeHtml(this.t('legendEE').replace(/^EE\s*/, ''))}</span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="conduct-badge conduct-me">ME</span> ${this.escapeHtml(this.t('legendME').replace(/^ME\s*/, ''))}</span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="conduct-badge conduct-ae">AE</span> ${this.escapeHtml(this.t('legendAE').replace(/^AE\s*/, ''))}</span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="conduct-badge conduct-be">BE</span> ${this.escapeHtml(this.t('legendBE').replace(/^BE\s*/, ''))}</span>
+      </div>
     `;
   },
 
