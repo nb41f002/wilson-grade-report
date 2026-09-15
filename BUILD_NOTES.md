@@ -68,7 +68,7 @@
 ## 2026-09-16 更新（Quiet Ledger 成績單）
 
 1. **Quiet Ledger 設計語彙**：`:root` 新增 navy / ink / gold / EE–BE 色票與 `pt` 字級變數；舊 `--primary` / `--gold` 映射到新色。
-2. **表頭**：移除厚海軍藍 banner；左 crest + 英文校名大、中文「葳格國際小學」小；金 1pt + 海軍 0.5pt 雙線；右上 Page n/m；學生英文主、中文輔，班級／學號靠右。
+2. **表頭**：移除厚海軍藍 banner；左 crest + 英文校名大、中文「威爾森國際小學」小；金 1pt + 海軍 0.5pt 雙線；右上 Page n/m；學生英文主、中文輔，班級／學號靠右。
 3. **表頭欄位**：`<span class="th-en">` + `<span class="th-zh">`（zh 顯示雙語；en 僅英文）。
 4. **背景**：`assets/report-bg.png`（1754×1240）經 `--report-bg` 套在 `.report-sheet.has-bg`，`background-size: 100% 100%`；表頭／表格半透明底以利底圖透出。
 5. **列印**：`@page { size: A4 landscape; margin: 8mm 10mm; }`；徽章用 Quiet Ledger EE/ME/AE/BE 色；`print-color-adjust: exact`。
