@@ -70,6 +70,7 @@ window.DataStore = {
     const d = raw && typeof raw === 'object' ? raw : {};
     d.schoolInfo = Object.assign({
       name: 'Wilson International Elementary School',
+      nameZh: '威爾森國際小學',
       academicYear: 'The Second Semester of the 114th Academic Year',
       term: 'Midterm',
       weights: { midterm: 40, daily: 60 },
@@ -144,6 +145,7 @@ window.DataStore = {
     return {
       schoolInfo: {
         name: 'Wilson International Elementary School',
+        nameZh: '威爾森國際小學',
         academicYear: 'The Second Semester of the 114th Academic Year',
         term: 'Midterm',
         weights: { midterm: 40, daily: 60 },

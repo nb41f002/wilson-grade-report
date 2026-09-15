@@ -1,6 +1,7 @@
 # 雙語小學橫式成績報告系統 v2
 
-專為 Wilson International Elementary School 教師設計的 **A4 橫式** 期中成績報告登記與列印工具。  
+專為 Wilson International Elementary School 教師設計的 **A4 橫式** 期中成績報告登記與列印工具。
+成績單預覽／列印採 **Modern International Academy** 國際學院風（雙層表頭、Overall 淡金強調、EE/ME/AE/BE 海軍藍代碼）。  
 頂部可切換 **繁中 | English**；成績單科目與評語維持原設定（多為英文，中文科目顯示中文）。
 
 **教師：** 葉容辰（nb41f002）
@@ -27,11 +28,11 @@
 |------|------|
 | 語言切換 | 頂部 `繁中 \| English`，教師介面（按鈕、標籤、提示、空狀態、模態、儲存狀態）即時切換 |
 | 成績試算 | 期中考預設 40%、平時 60%，總評自動計算；可勾「手動」覆寫 |
-| 學習習慣 | Performance / Teamwork / Assignment / Behavior → **EE / ME / AE / BE** 字母徽章（無笑臉） |
+| 學習習慣 | Performance / Teamwork / Assignment / Behavior → **EE / ME / AE / BE** 海軍藍代碼（無笑臉、無彩色 pill） |
 | 評語庫 | 插入片語，`[Name]` 自動換成學生英文名 |
 | 名單 | 貼上批次匯入、切換學生、進度條 |
 | 暫存 | `localStorage` 自動儲存；可匯出／讀取 JSON 備份；舊版 excellent→ee 等會自動遷移 |
-| 列印 | 列印目前學生或全班連印；`@page` A4 landscape；操行格為緊湊徽章 |
+| 列印 | 列印目前學生或全班連印；`@page` A4 landscape；Modern International Academy 版型與預覽一致 |
 | 科目 | 內建科目可勾選顯示／隱藏；可 **新增／重新命名／刪除／上下排序** 自訂科目（如 Drama）；分類 core／special／chinese／other；順序即成績單列印順序 |
 | 選項 | 學期標題可改（預設 Midterm）、國際生／操行 Independent／IXL／MAP 註記、導師簽名欄 |
 
@@ -47,10 +48,10 @@
 
 | 代碼 | 英文 | 中文 |
 |------|------|------|
-| EE | Exceeds Expectations | 超過期待 |
+| EE | Exceeds Expectations | 超越期待 |
 | ME | Meets Expectations | 符合期待 |
 | AE | Approaching Expectations | 接近期待 |
-| BE | Beginning | 起步中 |
+| BE | Below Expectations | 尚待加強 |
 
 科目較多時自動拆成最多 **2 頁**；簽名欄與等級圖例在最後一頁。
 

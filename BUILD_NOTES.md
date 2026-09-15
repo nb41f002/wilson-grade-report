@@ -73,3 +73,15 @@
 4. **背景**：`assets/report-bg.png`（1754×1240）經 `--report-bg` 套在 `.report-sheet.has-bg`，`background-size: 100% 100%`；表頭／表格半透明底以利底圖透出。
 5. **列印**：`@page { size: A4 landscape; margin: 8mm 10mm; }`；徽章用 Quiet Ledger EE/ME/AE/BE 色；`print-color-adjust: exact`。
 6. **未破壞**：自訂科目 CRUD、i18n、localStorage key 均未改動。
+
+---
+
+## 2026-09-16 ChatGPT Modern International Academy
+
+1. **Print + preview redesign** per `CHATGPT_DESIGN_SPEC.md`: warm paper `#FCFBF7`, navy `#17376D`, academic blue `#4E83D1`, gold accent sparingly, Overall `#FFF5D9`.
+2. **Header**: crest left · school EN + 威爾森國際小學 · big MIDTERM PROGRESS REPORT + 期中學習成績報告 · academic year/term right; student meta band (name / grade / ID / date).
+3. **Two-level table header**: group row ACADEMIC PROGRESS / LEARNING HABITS / TEACHER ASSESSMENT; sub-row Midterm·Daily·Overall + 4 habits; EN primary + ZH secondary.
+4. **Habits**: quiet navy EE/ME/AE/BE codes on light blue chips (no colorful emoji pills / smileys).
+5. **Legend band** + signature lines (Teacher / Director / Principal, optional Homeroom); fonts Inter + Noto Sans TC (not Times New Roman).
+6. **Watermark**: dropped Quiet Ledger `report-bg.png` reliance; optional very light crest `::before` (~3% opacity).
+7. **Preserved**: custom subjects CRUD, zh/en i18n, EE|ME|AE|BE model, localStorage + JSON, Alice sample, 1–2 page split (≤8 / page), Netlify static.

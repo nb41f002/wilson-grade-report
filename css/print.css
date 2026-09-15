@@ -1,31 +1,35 @@
-/* Quiet Ledger — A4 landscape print */
+/* Modern International Academy — A4 landscape print */
 
-/* Quiet Ledger print vars (mirrored for print context) */
 :root {
-  --navy-900: #0c1827;
-  --navy-800: #1a2f4c;
-  --navy-700: #1a365d;
-  --navy-500: #2b4c7e;
-  --ink: #1a202c;
-  --ink-soft: #4a5568;
-  --rule: #c5cdd8;
-  --rule-strong: #1a2f4c;
-  --paper: #ffffff;
-  --paper-tint: #f4f7fb;
-  --gold-600: #b8860b;
-  --gold-400: #d4af37;
-  --gold-line: #c9a227;
-  --ee-bg: #e6f4ea; --ee-fg: #1e5a3a; --ee-bd: #9bc5a9;
-  --me-bg: #e8f0fa; --me-fg: #1a365d; --me-bd: #9bb4d4;
-  --ae-bg: #faf3e0; --ae-fg: #7a5b12; --ae-bd: #e0c98a;
-  --be-bg: #f8ebe4; --be-fg: #7a3b1e; --be-bd: #e0b39a;
-  --fs-school: 13pt; --fs-term: 9.5pt; --fs-student: 11.5pt; --fs-meta: 8pt;
-  --fs-th: 7.5pt; --fs-td: 8.5pt; --fs-comment: 8pt; --fs-legend: 6.5pt;
-  --fs-sig: 7.5pt; --fs-zh-aux: 6.5pt;
-  --font-en: "Times New Roman", Georgia, serif;
-  --font-zh: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
-  --font-ui: "Segoe UI", "Noto Sans TC", sans-serif;
-  --report-bg: url("../assets/report-bg.png");
+  --navy: #17376D;
+  --blue: #4E83D1;
+  --blue-soft: #EAF2FC;
+  --blue-soft-2: #D7E6F8;
+  --gold: #F2B84B;
+  --gold-soft: #FFF5D9;
+  --paper: #FCFBF7;
+  --white: #FFFFFF;
+  --ink: #17233C;
+  --ink-2: #334155;
+  --text-muted: #64748B;
+  --border: #CAD7E7;
+  --border-light: #E5ECF4;
+  --header-bg: #17376D;
+  --subheader-bg: #EAF2FC;
+  --row-alt: #F8FAFD;
+  --overall-bg: #FFF5D9;
+  --font:
+    "Inter",
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --navy-900: #17376D;
+  --navy-800: #17376D;
+  --navy-700: #17376D;
+  --ink-soft: #64748B;
+  --rule: #CAD7E7;
+  --rule-strong: #17376D;
 }
 
 @page {
@@ -52,7 +56,13 @@
     width: auto !important;
     height: auto !important;
     overflow: visible !important;
-    color: var(--ink, #1a202c) !important;
+    color: var(--ink) !important;
+    font-family: var(--font) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -78,8 +88,8 @@
   }
 
   .report-sheet.a4-landscape {
-    width: 277mm !important; /* A4 landscape 297 − 10 − 10 */
-    height: 194mm !important; /* A4 landscape 210 − 8 − 8 */
+    width: 277mm !important;
+    height: 194mm !important;
     max-height: 194mm !important;
     min-height: 0 !important;
     margin: 0 auto !important;
@@ -95,18 +105,19 @@
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
-    background-color: var(--paper, #fff) !important;
-    background-image: var(--report-bg, none) !important;
-    background-size: 100% 100% !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    background-color: var(--paper) !important;
+    background-image: none !important;
+    font-family: var(--font) !important;
+  }
+
+  .report-sheet.a4-landscape::before {
+    opacity: 0.028 !important;
   }
 
   .report-sheet.a4-landscape:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
   }
-
 
   .report-header,
   .report-body,
@@ -115,40 +126,29 @@
   }
 
   .school-name {
-    font-size: var(--fs-school, 13pt) !important;
-    color: var(--navy-900, #0c1827) !important;
+    font-size: 11.5pt !important;
+    color: var(--navy) !important;
   }
   .school-name-zh {
-    font-size: var(--fs-zh-aux, 6.5pt) !important;
-    color: var(--ink-soft, #4a5568) !important;
+    font-size: 8pt !important;
+    color: var(--text-muted) !important;
   }
-  .ql-name-rules {
-    border-top: 1pt solid var(--gold-line, #c9a227) !important;
-    box-shadow: 0 1.5pt 0 0 var(--navy-800, #1a2f4c) !important;
+  .report-title-en {
+    font-size: 18pt !important;
+    color: var(--navy) !important;
   }
-  .academic-year {
-    font-size: var(--fs-meta, 8pt) !important;
-    color: var(--ink-soft, #4a5568) !important;
-  }
-  .term-title {
-    font-size: var(--fs-term, 9.5pt) !important;
-    color: var(--navy-700, #1a365d) !important;
-  }
-  .ql-page {
-    font-size: var(--fs-meta, 8pt) !important;
-    color: var(--ink-soft, #4a5568) !important;
-  }
-  .student-name-en {
-    font-size: var(--fs-student, 11.5pt) !important;
-    color: var(--navy-900, #0c1827) !important;
-  }
-  .student-name-zh {
-    font-size: 9.5pt !important;
-    color: var(--ink-soft, #4a5568) !important;
+  .report-title-zh {
+    font-size: 9pt !important;
+    color: var(--text-muted) !important;
   }
   .crest-icon {
-    width: 38px !important;
-    height: 44px !important;
+    width: 18mm !important;
+    height: 18mm !important;
+  }
+
+  .student-meta {
+    background: var(--blue-soft) !important;
+    border-left: 2mm solid var(--blue) !important;
   }
 
   .report-table {
@@ -156,35 +156,23 @@
     width: 100% !important;
     max-width: 100% !important;
     table-layout: fixed !important;
-    border: 1pt solid var(--rule-strong, #1a2f4c) !important;
-    background: transparent !important;
+    border: 1px solid var(--border) !important;
+    background: var(--white) !important;
   }
 
   .report-table th,
   .report-table td {
-    border: 0.6pt solid var(--rule-strong, #1a2f4c) !important;
+    border-right: 1px solid var(--border-light) !important;
+    border-bottom: 1px solid var(--border-light) !important;
   }
 
-  .report-table thead th {
-    background-color: rgba(244, 247, 251, 0.92) !important;
-    color: var(--navy-800, #1a2f4c) !important;
-    font-size: var(--fs-th, 7.5pt) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  .report-table thead .group-head th {
+    background: var(--navy) !important;
+    color: #fff !important;
   }
-
-  .th-en {
-    display: block !important;
-    font-family: var(--font-en, "Times New Roman", Georgia, serif) !important;
-    font-size: var(--fs-th, 7.5pt) !important;
-    color: var(--navy-800, #1a2f4c) !important;
-  }
-
-  .th-zh {
-    display: block !important;
-    font-family: var(--font-zh, "Noto Serif TC", "Songti TC", serif) !important;
-    font-size: var(--fs-zh-aux, 6.5pt) !important;
-    color: var(--ink-soft, #4a5568) !important;
+  .report-table thead .sub-head th {
+    background: var(--blue-soft) !important;
+    color: var(--navy) !important;
   }
 
   .report-table tr,
@@ -194,38 +182,39 @@
   }
 
   .row-alt td {
-    background-color: rgba(244, 247, 251, 0.55) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    background: var(--row-alt) !important;
   }
 
-  .th-weight {
-    background: rgba(250, 243, 224, 0.95) !important;
-    color: var(--navy-700, #1a365d) !important;
-    border: 0.5pt solid var(--ae-bd, #e0c98a) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  .col-overall,
+  .overall,
+  .report-table thead .sub-head th.col-overall,
+  .report-table thead .sub-head th.th-overall {
+    background: var(--overall-bg) !important;
+    color: var(--navy) !important;
+    font-weight: 800 !important;
   }
-
-  .th-sub-row th {
-    background: rgba(244, 247, 251, 0.72) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  .row-alt td.col-overall,
+  .row-alt td.overall {
+    background: var(--overall-bg) !important;
   }
 
   .col-subject,
+  .subject {
+    font-size: 8.2pt !important;
+    color: var(--navy) !important;
+  }
   .col-score,
-  .col-overall {
-    font-size: var(--fs-td, 8.5pt) !important;
+  .score {
+    font-size: 9.5pt !important;
   }
-  .col-overall { font-size: 10.5pt !important; }
-
-  .assessment-content {
-    font-size: var(--fs-comment, 8pt) !important;
-    line-height: 1.3 !important;
-    color: var(--ink, #1a202c) !important;
+  .assessment-content,
+  .teacher-assessment {
+    font-size: 7.5pt !important;
+    line-height: 1.35 !important;
+    color: var(--ink-2) !important;
   }
 
+  .habit-code,
   .conduct-badge {
     display: inline-flex !important;
     align-items: center !important;
@@ -233,76 +222,48 @@
     min-width: 18px !important;
     height: 13px !important;
     padding: 0 4px !important;
-    font-size: 6.5pt !important;
+    font-size: 7.5pt !important;
     font-weight: 800 !important;
-    border-radius: 999px !important;
-    border-width: 0.5pt !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    letter-spacing: 0.04em !important;
+    border-radius: 4px !important;
+    color: var(--navy) !important;
+    background: #EEF5FD !important;
+    border: none !important;
   }
 
-  .conduct-ee {
-    background: var(--ee-bg, #e6f4ea) !important;
-    color: var(--ee-fg, #1e5a3a) !important;
-    border-color: var(--ee-bd, #9bc5a9) !important;
-  }
-  .conduct-me {
-    background: var(--me-bg, #e8f0fa) !important;
-    color: var(--me-fg, #1a365d) !important;
-    border-color: var(--me-bd, #9bb4d4) !important;
-  }
-  .conduct-ae {
-    background: var(--ae-bg, #faf3e0) !important;
-    color: var(--ae-fg, #7a5b12) !important;
-    border-color: var(--ae-bd, #e0c98a) !important;
-  }
-  .conduct-be {
-    background: var(--be-bg, #f8ebe4) !important;
-    color: var(--be-fg, #7a3b1e) !important;
-    border-color: var(--be-bd, #e0b39a) !important;
-  }
-
-  .col-conduct {
-    padding: 1px !important;
-    overflow: hidden !important;
-  }
-
+  .habit-legend,
   .conduct-legend {
-    font-size: var(--fs-legend, 6.5pt) !important;
-    margin-top: 1.5mm !important;
+    background: var(--blue-soft) !important;
+    border-left: 2mm solid var(--blue) !important;
+    font-size: 6.5pt !important;
+    margin-top: 2.5mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  .sig-date-hint {
-    font-size: 6.5pt !important;
-    color: var(--ink-soft, #4a5568) !important;
+  .signature-grid {
+    gap: 8px 12mm !important;
+    margin-top: 3mm !important;
+    border-top: none !important;
+    padding-top: 0 !important;
   }
 
-  .signature-grid {
-    gap: 8px 14px !important;
-    margin-top: 2mm !important;
-    border-top: 0.6pt solid var(--rule, #c5cdd8) !important;
-    padding-top: 1.5mm !important;
+  .signature-line,
+  .sig-line {
+    height: 7mm !important;
+    border-bottom: 1px solid #758399 !important;
   }
 
   .sig-title {
-    color: var(--navy-700, #1a365d) !important;
-    font-size: var(--fs-sig, 7.5pt) !important;
+    color: var(--ink) !important;
+    font-size: 7.3pt !important;
     font-weight: 700 !important;
   }
 
-  .sig-line {
-    margin-top: 7mm !important;
-    border-bottom: 0.8pt solid var(--rule-strong, #1a2f4c) !important;
-  }
-
   .flag-chip {
-    background: rgba(232, 240, 250, 0.9) !important;
-    border: 0.5pt solid var(--me-bd, #9bb4d4) !important;
-    color: var(--me-fg, #1a365d) !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    background: var(--white) !important;
+    border: 0.5pt solid var(--border) !important;
+    color: var(--navy) !important;
   }
 
   .report-footer {
