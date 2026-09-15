@@ -101,11 +101,7 @@ window.DataStore = {
     if (!Array.isArray(d.availableSubjects) || !d.availableSubjects.length) {
       d.availableSubjects = this.getFallbackData().availableSubjects;
     }
-    d.availableSubjects = d.availableSubjects.map((s) => ({
-      id: s.id,
-      name: s.name,
-      enabled: s.enabled !== false && s.defaultEnabled !== false
-    }));
+    d.availableSubjects = d.availableSubjects.map((s, i) => this.normalizeSubject(s, i));
     if (!Array.isArray(d.students)) d.students = [];
     d.students = d.students.map((stu, i) => this.normalizeStudent(stu, i));
     if (d.locale !== 'en' && d.locale !== 'zh') d.locale = undefined;
@@ -170,17 +166,17 @@ window.DataStore = {
         }
       },
       availableSubjects: [
-        { id: 'la', name: 'Language Arts', enabled: true },
-        { id: 'math', name: 'Mathematics', enabled: true },
-        { id: 'wss', name: 'Western Social Studies', enabled: true },
-        { id: 'music', name: 'Music', enabled: true },
-        { id: 'art', name: 'Art', enabled: true },
-        { id: 'health', name: 'Health', enabled: true },
-        { id: 'gp', name: 'G.P.', enabled: true },
-        { id: 'phonics', name: 'Phonics', enabled: true },
-        { id: 'writing', name: '作文', enabled: true },
-        { id: 'singing', name: '中唱', enabled: true },
-        { id: 'social', name: '中社', enabled: true }
+        { id: 'la', name: 'Language Arts', chineseName: '語文', category: 'core', enabled: true },
+        { id: 'math', name: 'Mathematics', chineseName: '數學', category: 'core', enabled: true },
+        { id: 'wss', name: 'Western Social Studies', chineseName: '西社', category: 'core', enabled: true },
+        { id: 'music', name: 'Music', chineseName: '音樂', category: 'special', enabled: true },
+        { id: 'art', name: 'Art', chineseName: '美勞', category: 'special', enabled: true },
+        { id: 'health', name: 'Health', chineseName: '健康', category: 'special', enabled: true },
+        { id: 'gp', name: 'G.P.', chineseName: '體能', category: 'special', enabled: true },
+        { id: 'phonics', name: 'Phonics', chineseName: '拼音', category: 'special', enabled: true },
+        { id: 'writing', name: '作文', chineseName: '作文', category: 'chinese', enabled: true },
+        { id: 'singing', name: '中唱', chineseName: '中唱', category: 'chinese', enabled: true },
+        { id: 'social', name: '中社', chineseName: '中社', category: 'chinese', enabled: true }
       ],
       students: [{
         id: 's01',
@@ -287,6 +283,136 @@ window.DataStore = {
     const mWeight = (this.data?.schoolInfo?.weights?.midterm ?? 40) / 100;
     const dWeight = (this.data?.schoolInfo?.weights?.daily ?? 60) / 100;
     return Math.round(Number(midterm) * mWeight + Number(daily) * dWeight);
+  },
+
+  SUBJECT_CATEGORIES: ['core', 'special', 'chinese', 'other'],
+
+  BUILTIN_IDS: {
+    la: 'core', math: 'core', wss: 'core',
+    music: 'special', art: 'special', health: 'special', gp: 'special', phonics: 'special',
+    writing: 'chinese', singing: 'chinese', social: 'chinese'
+  },
+
+  isCustomSubject(subjOrId) {
+    const id = typeof subjOrId === 'string' ? subjOrId : (subjOrId && subjOrId.id);
+    return !!(id && String(id).startsWith('custom_'));
+  },
+
+  normalizeSubject(s, i) {
+    const raw = s && typeof s === 'object' ? s : {};
+    const id = raw.id || ('custom_' + Date.now() + '_' + (i || 0));
+    const builtinCat = this.BUILTIN_IDS[id];
+    let category = raw.category;
+    if (!this.SUBJECT_CATEGORIES.includes(category)) {
+      category = builtinCat || (String(id).startsWith('custom_') ? 'other' : 'core');
+    }
+    return {
+      id,
+      name: (raw.name != null && String(raw.name).trim()) ? String(raw.name).trim() : id,
+      chineseName: raw.chineseName != null ? String(raw.chineseName).trim() : '',
+      category,
+      enabled: raw.enabled !== false && raw.defaultEnabled !== false
+    };
+  },
+
+  emptyGrade() {
+    return {
+      midterm: '',
+      daily: '',
+      overall: '',
+      isManualOverall: false,
+      conduct: {
+        performance: 'ee',
+        teamwork: 'ee',
+        assignment: 'ee',
+        behavior: 'ee'
+      },
+      comment: ''
+    };
+  },
+
+  ensureGradeEntriesForSubject(subjId) {
+    if (!this.data || !Array.isArray(this.data.students)) return;
+    this.data.students.forEach((stu) => {
+      if (!stu.grades) stu.grades = {};
+      if (!stu.grades[subjId]) stu.grades[subjId] = this.emptyGrade();
+    });
+  },
+
+  addCustomSubject({ name, chineseName, category, enabled } = {}) {
+    const trimmed = (name || '').trim();
+    if (!trimmed) throw new Error('name_required');
+    const cat = this.SUBJECT_CATEGORIES.includes(category) ? category : 'other';
+    const id = 'custom_' + Date.now();
+    const subj = this.normalizeSubject({
+      id,
+      name: trimmed,
+      chineseName: (chineseName || '').trim(),
+      category: cat,
+      enabled: enabled !== false
+    });
+    if (!Array.isArray(this.data.availableSubjects)) this.data.availableSubjects = [];
+    this.data.availableSubjects.push(subj);
+    this.ensureGradeEntriesForSubject(id);
+    this.saveImmediate();
+    this.notifyChange('subject_added');
+    return subj;
+  },
+
+  updateSubject(id, patch = {}) {
+    const list = this.data?.availableSubjects || [];
+    const subj = list.find((s) => s.id === id);
+    if (!subj) return null;
+    if (patch.name !== undefined) {
+      const n = String(patch.name).trim();
+      if (!n) throw new Error('name_required');
+      subj.name = n;
+    }
+    if (patch.chineseName !== undefined) {
+      subj.chineseName = String(patch.chineseName || '').trim();
+    }
+    if (patch.category !== undefined && this.SUBJECT_CATEGORIES.includes(patch.category)) {
+      subj.category = patch.category;
+    }
+    if (patch.enabled !== undefined) subj.enabled = !!patch.enabled;
+    this.saveImmediate();
+    this.notifyChange('subject_updated');
+    return subj;
+  },
+
+  deleteSubject(id) {
+    const list = this.data?.availableSubjects || [];
+    const idx = list.findIndex((s) => s.id === id);
+    if (idx < 0) return false;
+    list.splice(idx, 1);
+    (this.data.students || []).forEach((stu) => {
+      if (stu.grades && stu.grades[id]) delete stu.grades[id];
+    });
+    this.saveImmediate();
+    this.notifyChange('subject_deleted');
+    return true;
+  },
+
+  moveSubject(id, direction) {
+    const list = this.data?.availableSubjects || [];
+    const idx = list.findIndex((s) => s.id === id);
+    if (idx < 0) return false;
+    const target = direction === 'up' ? idx - 1 : idx + 1;
+    if (target < 0 || target >= list.length) return false;
+    const tmp = list[idx];
+    list[idx] = list[target];
+    list[target] = tmp;
+    this.saveImmediate();
+    this.notifyChange('subject_reordered');
+    return true;
+  },
+
+  subjectDisplayName(subj) {
+    if (!subj) return '';
+    const name = subj.name || '';
+    const zh = subj.chineseName || '';
+    if (zh && zh !== name) return name + ' / ' + zh;
+    return name;
   },
 
   enabledSubjects() {

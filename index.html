@@ -108,8 +108,34 @@
         </section>
 
         <section class="card-section">
-          <h2 class="section-title" data-i18n="sectionSubjects">顯示科目（可勾選）</h2>
+          <h2 class="section-title" data-i18n="sectionSubjects">科目設定（勾選／新增／排序）</h2>
+          <p class="section-hint" data-i18n="subjectsHint">可勾選顯示、上下調整順序；自訂科目可重新命名或刪除。</p>
           <div id="subjects-config" class="subjects-config"></div>
+          <div class="add-subject-panel" id="add-subject-panel">
+            <h3 class="add-subject-title" data-i18n="btnAddSubject">新增科目</h3>
+            <div class="add-subject-grid">
+              <div class="form-group">
+                <label class="form-label" for="input-new-subj-name" data-i18n="labelSubjectName">科目名稱（必填）</label>
+                <input type="text" id="input-new-subj-name" class="form-input" data-i18n-placeholder="placeholderSubjectName" placeholder="例如 Drama" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="input-new-subj-zh" data-i18n="labelSubjectZh">中文名稱（選填）</label>
+                <input type="text" id="input-new-subj-zh" class="form-input" data-i18n-placeholder="placeholderSubjectZh" placeholder="例如 戲劇" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="select-new-subj-cat" data-i18n="labelSubjectCategory">分類</label>
+                <select id="select-new-subj-cat" class="form-input">
+                  <option value="core" data-i18n="catCore">核心</option>
+                  <option value="special" data-i18n="catSpecial">專科</option>
+                  <option value="chinese" data-i18n="catChinese">中文</option>
+                  <option value="other" selected data-i18n="catOther">其他</option>
+                </select>
+              </div>
+              <div class="form-group add-subject-actions">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-add-subject" data-i18n="btnSaveSubject">加入</button>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section class="card-section subjects-section">
@@ -158,6 +184,39 @@
         <div class="modal-actions">
           <button type="button" class="btn btn-secondary" id="btn-batch-cancel" data-i18n="btnCancel">取消</button>
           <button type="button" class="btn btn-primary" id="btn-batch-submit" data-i18n="btnConfirmImport">確認匯入</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay no-print" id="edit-subject-modal" role="dialog" aria-modal="true" aria-labelledby="edit-subject-title">
+    <div class="modal-window modal-window-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="edit-subject-title" data-i18n="editSubjectTitle">編輯科目</h3>
+        <button type="button" class="modal-close-btn" id="edit-subject-close" data-i18n-aria="close" aria-label="關閉">×</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-subj-id">
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label" for="edit-subj-name" data-i18n="labelSubjectName">科目名稱（必填）</label>
+          <input type="text" id="edit-subj-name" class="form-input" autocomplete="off">
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label" for="edit-subj-zh" data-i18n="labelSubjectZh">中文名稱（選填）</label>
+          <input type="text" id="edit-subj-zh" class="form-input" autocomplete="off">
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label" for="edit-subj-cat" data-i18n="labelSubjectCategory">分類</label>
+          <select id="edit-subj-cat" class="form-input">
+            <option value="core" data-i18n="catCore">核心</option>
+            <option value="special" data-i18n="catSpecial">專科</option>
+            <option value="chinese" data-i18n="catChinese">中文</option>
+            <option value="other" data-i18n="catOther">其他</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="btn-edit-subject-cancel" data-i18n="btnCancel">取消</button>
+          <button type="button" class="btn btn-primary" id="btn-edit-subject-save" data-i18n="btnSaveEdit">儲存</button>
         </div>
       </div>
     </div>

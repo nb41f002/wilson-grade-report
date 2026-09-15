@@ -32,8 +32,16 @@
 | 名單 | 貼上批次匯入、切換學生、進度條 |
 | 暫存 | `localStorage` 自動儲存；可匯出／讀取 JSON 備份；舊版 excellent→ee 等會自動遷移 |
 | 列印 | 列印目前學生或全班連印；`@page` A4 landscape；操行格為緊湊徽章 |
-| 科目 | 可勾選顯示：LA、Math、WSS、Music、Art、Health、G.P.、Phonics、作文、中唱、中社 |
+| 科目 | 內建科目可勾選顯示／隱藏；可 **新增／重新命名／刪除／上下排序** 自訂科目（如 Drama）；分類 core／special／chinese／other；順序即成績單列印順序 |
 | 選項 | 學期標題可改（預設 Midterm）、國際生／操行 Independent／IXL／MAP 註記、導師簽名欄 |
+
+### 自訂科目
+
+1. 在左側「科目設定」底部填寫名稱（必填）、中文名稱（選填）、分類後按「加入」。
+2. 新科目 id 為 `custom_<timestamp>`，會為全班學生建立空白成績格，並自動啟用。
+3. 用 ▲／▼ 調整 `availableSubjects` 順序；成績單預覽與列印依此順序。
+4. ✎ 重新命名；× 刪除（內建科目會二次確認，也可只取消勾選隱藏）。
+5. 資料經 `localStorage` 自動暫存，並含在 JSON 匯出／匯入中。
 
 ### 學習習慣等級
 

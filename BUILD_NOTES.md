@@ -53,3 +53,23 @@
 4. **溢出修正**：`.conduct-picker-row` 用 `minmax(0,1fr)` 網格 + `.level-btn-group { flex-wrap }`；窄卡 2×2；`min-width:0` / `overflow:hidden` 防止貼出白卡。
 5. **視覺**：海軍藍／白、圓角卡片、較大內距；列印徽章緊湊、`tr { break-inside:avoid }`。
 6. Alice 示範資料操行改為 `ee`（第二位樣本含 `me`）。
+
+---
+
+## 2026-09-16 更新（自訂科目）
+
+1. **Custom subjects**：ADD / RENAME / DELETE / REORDER；id=`custom_<timestamp>`；category=`core|special|chinese|other`；可選 `chineseName`。
+2. 新增時為每位學生建立空成績；刪除時移除對應 grades；順序由 `availableSubjects` 陣列決定，報表已尊重順序。
+3. i18n 新增科目相關 zh/en 字串；列印表頭海軍藍 banner、徽章間距、簽名列 Date 提示。
+4. 科目卡溢出：`minmax(0,1fr)`、`overflow-wrap`、`#subject-list { min-width:0 }`。
+
+---
+
+## 2026-09-16 更新（Quiet Ledger 成績單）
+
+1. **Quiet Ledger 設計語彙**：`:root` 新增 navy / ink / gold / EE–BE 色票與 `pt` 字級變數；舊 `--primary` / `--gold` 映射到新色。
+2. **表頭**：移除厚海軍藍 banner；左 crest + 英文校名大、中文「葳格國際小學」小；金 1pt + 海軍 0.5pt 雙線；右上 Page n/m；學生英文主、中文輔，班級／學號靠右。
+3. **表頭欄位**：`<span class="th-en">` + `<span class="th-zh">`（zh 顯示雙語；en 僅英文）。
+4. **背景**：`assets/report-bg.png`（1754×1240）經 `--report-bg` 套在 `.report-sheet.has-bg`，`background-size: 100% 100%`；表頭／表格半透明底以利底圖透出。
+5. **列印**：`@page { size: A4 landscape; margin: 8mm 10mm; }`；徽章用 Quiet Ledger EE/ME/AE/BE 色；`print-color-adjust: exact`。
+6. **未破壞**：自訂科目 CRUD、i18n、localStorage key 均未改動。

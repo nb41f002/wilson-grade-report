@@ -29,57 +29,79 @@
     {
       "id": "la",
       "name": "Language Arts",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "語文",
+      "category": "core"
     },
     {
       "id": "math",
       "name": "Mathematics",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "數學",
+      "category": "core"
     },
     {
       "id": "wss",
       "name": "Western Social Studies",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "西社",
+      "category": "core"
     },
     {
       "id": "music",
       "name": "Music",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "音樂",
+      "category": "special"
     },
     {
       "id": "art",
       "name": "Art",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "美勞",
+      "category": "special"
     },
     {
       "id": "health",
       "name": "Health",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "健康",
+      "category": "special"
     },
     {
       "id": "gp",
       "name": "G.P.",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "體能",
+      "category": "special"
     },
     {
       "id": "phonics",
       "name": "Phonics",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "拼音",
+      "category": "special"
     },
     {
       "id": "writing",
       "name": "作文",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "作文",
+      "category": "chinese"
     },
     {
       "id": "singing",
       "name": "中唱",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "中唱",
+      "category": "chinese"
     },
     {
       "id": "social",
       "name": "中社",
-      "enabled": true
+      "enabled": true,
+      "chineseName": "中社",
+      "category": "chinese"
     }
   ],
   "students": [

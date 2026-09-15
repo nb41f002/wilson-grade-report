@@ -25,8 +25,33 @@ window.ReportRenderer = {
       .replace(/"/g, '&quot;');
   },
 
+  subjectLabel(subj) {
+    if (window.DataStore && typeof window.DataStore.subjectDisplayName === 'function') {
+      return window.DataStore.subjectDisplayName(subj);
+    }
+    if (!subj) return '';
+    const name = subj.name || '';
+    const zh = subj.chineseName || '';
+    if (zh && zh !== name) return name + ' / ' + zh;
+    return name;
+  },
+
   t(key) {
     return (window.I18n && window.I18n.t(key)) || key;
+  },
+
+  /** Quiet Ledger bilingual th: <span class="th-en">…</span><span class="th-zh">…</span> */
+  thLabel(enKey, zhKey) {
+    const en = this.escapeHtml(this.t(enKey));
+    const locale = (window.I18n && window.I18n.locale) || 'zh';
+    if (locale === 'en' || !zhKey) {
+      return `<span class="th-en">${en}</span>`;
+    }
+    const zh = this.escapeHtml(this.t(zhKey));
+    if (!zh || zh === zhKey) {
+      return `<span class="th-en">${en}</span>`;
+    }
+    return `<span class="th-en">${en}</span><span class="th-zh">${zh}</span>`;
   },
 
   /** 科目超過此數拆成兩頁（最多 2 頁） */
@@ -65,7 +90,7 @@ window.ReportRenderer = {
       const pageNum = idx + 1;
       const isLast = pageNum === totalPages;
       html += `
-        <article class="report-sheet a4-landscape" data-student-id="${this.escapeHtml(student.id)}" data-page="${pageNum}">
+        <article class="report-sheet a4-landscape has-bg" data-student-id="${this.escapeHtml(student.id)}" data-page="${pageNum}">
           ${this.renderHeader(schoolInfo, student, pageNum, totalPages)}
           <div class="report-body">
             ${this.renderTable(pageSubjects, student, schoolInfo)}
@@ -82,32 +107,46 @@ window.ReportRenderer = {
   renderHeader(schoolInfo, student, pageNum, totalPages) {
     const nameZh = this.escapeHtml(student.chineseName || '');
     const nameEn = this.escapeHtml(student.englishName || '');
-    const displayName = `${nameZh}${nameZh && nameEn ? ' ' : ''}${nameEn}`.trim() || '—';
     const term = this.escapeHtml(schoolInfo.term || 'Midterm');
     const year = this.escapeHtml(schoolInfo.academicYear || '');
     const school = this.escapeHtml(schoolInfo.name || 'Wilson International Elementary School');
+    const schoolZh = this.escapeHtml(schoolInfo.nameZh || schoolInfo.chineseName || '葳格國際小學');
     const flags = this.mergeFlags(schoolInfo, student);
 
     const flagChips = [];
     if (flags.internationalStudent) flagChips.push(`<span class="flag-chip">${this.escapeHtml(this.t('flagChipIntl'))}</span>`);
     if (flags.independentConduct) flagChips.push(`<span class="flag-chip">${this.escapeHtml(this.t('flagChipConduct'))}</span>`);
 
+    const namePrimary = nameEn || nameZh || '—';
+    const nameSecondary = nameEn && nameZh ? nameZh : '';
+
     return `
       <header class="report-header">
-        <div class="header-crest-wrap">
-          <img src="assets/wilson-crest.svg" alt="Wilson Crest" class="crest-icon">
+        <div class="ql-top">
+          <div class="ql-brand">
+            <div class="header-crest-wrap">
+              <img src="assets/wilson-crest.svg" alt="Wilson Crest" class="crest-icon">
+            </div>
+            <div class="ql-brand-text">
+              <h1 class="school-name">${school}</h1>
+              <p class="school-name-zh">${schoolZh}</p>
+              <div class="ql-name-rules" aria-hidden="true"></div>
+              <p class="academic-year">${year}</p>
+              <p class="term-title">${term}</p>
+            </div>
+          </div>
+          <div class="ql-page">Page ${pageNum} / ${totalPages}</div>
         </div>
-        <h1 class="school-name">${school}</h1>
-        <p class="academic-year">${year}</p>
-        <p class="term-title">${term}</p>
-        <div class="student-name-line">
-          <span class="student-name-val">${displayName}</span>
-          ${flagChips.length ? `<span class="flag-chips">${flagChips.join('')}</span>` : ''}
-        </div>
-        <div class="header-meta-slim">
-          ${student.classGrade ? `<span>${this.escapeHtml(student.classGrade)}</span>` : ''}
-          ${student.studentId ? `<span>ID: ${this.escapeHtml(student.studentId)}</span>` : ''}
-          ${totalPages > 1 ? `<span>Page ${pageNum} / ${totalPages}</span>` : ''}
+        <div class="ql-student-bar">
+          <div class="ql-student-names">
+            <span class="student-name-en">${namePrimary}</span>
+            ${nameSecondary ? `<span class="student-name-zh">${nameSecondary}</span>` : ''}
+            ${flagChips.length ? `<span class="flag-chips">${flagChips.join('')}</span>` : ''}
+          </div>
+          <div class="ql-student-meta">
+            ${student.classGrade ? `<span>${this.escapeHtml(student.classGrade)}</span>` : ''}
+            ${student.studentId ? `<span>ID: ${this.escapeHtml(student.studentId)}</span>` : ''}
+          </div>
         </div>
       </header>
     `;
@@ -137,7 +176,7 @@ window.ReportRenderer = {
 
       return `
         <tr class="subject-row${alt}">
-          <td class="col-subject">${this.escapeHtml(subj.name)}</td>
+          <td class="col-subject">${this.escapeHtml(this.subjectLabel(subj))}</td>
           <td class="col-score col-midterm">${midterm}</td>
           <td class="col-score col-daily">${daily}</td>
           <td class="col-score col-overall">${overall}</td>
@@ -151,20 +190,20 @@ window.ReportRenderer = {
       <table class="report-table">
         <thead>
           <tr>
-            <th rowspan="2" class="th-subject">${this.t('thSubject')}</th>
-            <th class="th-score">${this.t('thMidterm')}<br><span class="th-weight">${mWeight}%</span></th>
-            <th class="th-score">${this.t('thDaily')}<br><span class="th-weight">${dWeight}%</span></th>
-            <th rowspan="2" class="th-score th-overall">${this.t('thOverall')}</th>
-            <th colspan="4" class="th-conduct">${this.t('thConduct')}</th>
-            <th rowspan="2" class="th-assessment">${this.t('thAssessment')}</th>
+            <th rowspan="2" class="th-subject">${this.thLabel('thSubject', 'thSubjectZh')}</th>
+            <th class="th-score">${this.thLabel('thMidterm', 'thMidtermZh')}<span class="th-weight">${mWeight}%</span></th>
+            <th class="th-score">${this.thLabel('thDaily', 'thDailyZh')}<span class="th-weight">${dWeight}%</span></th>
+            <th rowspan="2" class="th-score th-overall">${this.thLabel('thOverall', 'thOverallZh')}</th>
+            <th colspan="4" class="th-conduct">${this.thLabel('thConduct', 'thConductZh')}</th>
+            <th rowspan="2" class="th-assessment">${this.thLabel('thAssessment', 'thAssessmentZh')}</th>
           </tr>
           <tr class="th-sub-row">
-            <th class="th-sub">${this.t('thSubExam')}</th>
-            <th class="th-sub">${this.t('thSubPerf')}</th>
-            <th class="th-conduct-sub">${this.t('thPerf')}</th>
-            <th class="th-conduct-sub">${this.t('thTeam')}</th>
-            <th class="th-conduct-sub">${this.t('thAssign')}</th>
-            <th class="th-conduct-sub">${this.t('thBehav')}</th>
+            <th class="th-sub">${this.thLabel('thSubExam', 'thSubExamZh')}</th>
+            <th class="th-sub">${this.thLabel('thSubPerf', 'thSubPerfZh')}</th>
+            <th class="th-conduct-sub">${this.thLabel('thPerf', 'thPerfZh')}</th>
+            <th class="th-conduct-sub">${this.thLabel('thTeam', 'thTeamZh')}</th>
+            <th class="th-conduct-sub">${this.thLabel('thAssign', 'thAssignZh')}</th>
+            <th class="th-conduct-sub">${this.thLabel('thBehav', 'thBehavZh')}</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -205,18 +244,22 @@ window.ReportRenderer = {
           <div class="sig-block">
             <span class="sig-title">${this.escapeHtml(sig.homeroom || '導師')}</span>
             <div class="sig-line"></div>
+            <span class="sig-date-hint">Date / 日期</span>
           </div>` : ''}
           <div class="sig-block">
             <span class="sig-title">${this.escapeHtml(sig.teacher || 'Teacher / 教師')}</span>
             <div class="sig-line"></div>
+            <span class="sig-date-hint">Date / 日期</span>
           </div>
           <div class="sig-block">
             <span class="sig-title">${this.escapeHtml(sig.director || 'Director / 主任')}</span>
             <div class="sig-line"></div>
+            <span class="sig-date-hint">Date / 日期</span>
           </div>
           <div class="sig-block">
             <span class="sig-title">${this.escapeHtml(sig.principal || 'Principal / 校長')}</span>
             <div class="sig-line"></div>
+            <span class="sig-date-hint">Date / 日期</span>
           </div>
         </div>
       </footer>

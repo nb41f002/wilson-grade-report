@@ -106,26 +106,138 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderPreview();
   }
 
+  function catLabel(cat) {
+    const map = { core: 'catCore', special: 'catSpecial', chinese: 'catChinese', other: 'catOther' };
+    return t(map[cat] || 'catOther');
+  }
+
+  function escapeAttr(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function refreshCategorySelects() {
+    [['select-new-subj-cat', false], ['edit-subj-cat', true]].forEach(([id, keepValue]) => {
+      const sel = $(id);
+      if (!sel) return;
+      const cur = sel.value;
+      const opts = [
+        ['core', 'catCore'],
+        ['special', 'catSpecial'],
+        ['chinese', 'catChinese'],
+        ['other', 'catOther']
+      ];
+      sel.innerHTML = opts.map(([val, key]) =>
+        `<option value="${val}">${t(key)}</option>`
+      ).join('');
+      if (keepValue && opts.some(([v]) => v === cur)) sel.value = cur;
+      else if (!keepValue) sel.value = 'other';
+    });
+  }
+
   function renderSubjectsConfig() {
     const box = $('subjects-config');
     if (!box) return;
-    box.innerHTML = window.DataStore.data.availableSubjects.map((s) => `
-      <label class="subj-toggle">
-        <input type="checkbox" data-subj-toggle="${s.id}" ${s.enabled !== false ? 'checked' : ''}>
-        <span>${s.name}</span>
-      </label>
-    `).join('');
+    const list = window.DataStore.data.availableSubjects || [];
+    box.innerHTML = list.map((s, idx) => {
+      const isCustom = window.DataStore.isCustomSubject(s);
+      const display = window.DataStore.subjectDisplayName(s);
+      const tag = isCustom ? t('customTag') : t('builtinTag');
+      return `
+        <div class="subj-row" data-subj-id="${escapeAttr(s.id)}">
+          <label class="subj-enable" title="${escapeAttr(t('labelEnabled'))}">
+            <input type="checkbox" data-subj-toggle="${escapeAttr(s.id)}" ${s.enabled !== false ? 'checked' : ''} aria-label="${escapeAttr(t('labelEnabled'))}">
+          </label>
+          <div class="subj-info">
+            <span class="subj-name">${escapeAttr(display)}</span>
+            <span class="subj-meta">
+              <span class="subj-tag ${isCustom ? 'tag-custom' : 'tag-builtin'}">${escapeAttr(tag)}</span>
+              <span class="subj-cat">${escapeAttr(catLabel(s.category))}</span>
+            </span>
+          </div>
+          <div class="subj-actions">
+            <button type="button" class="btn btn-secondary btn-xs" data-subj-up="${escapeAttr(s.id)}" ${idx === 0 ? 'disabled' : ''} title="${escapeAttr(t('btnMoveUp'))}" aria-label="${escapeAttr(t('btnMoveUp'))}">▲</button>
+            <button type="button" class="btn btn-secondary btn-xs" data-subj-down="${escapeAttr(s.id)}" ${idx >= list.length - 1 ? 'disabled' : ''} title="${escapeAttr(t('btnMoveDown'))}" aria-label="${escapeAttr(t('btnMoveDown'))}">▼</button>
+            <button type="button" class="btn btn-secondary btn-xs" data-subj-edit="${escapeAttr(s.id)}" title="${escapeAttr(t('btnEditSubject'))}" aria-label="${escapeAttr(t('btnEditSubject'))}">✎</button>
+            <button type="button" class="btn btn-danger btn-xs" data-subj-del="${escapeAttr(s.id)}" title="${escapeAttr(t('btnDeleteSubject'))}" aria-label="${escapeAttr(t('btnDeleteSubject'))}">×</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
     box.querySelectorAll('[data-subj-toggle]').forEach((chk) => {
       chk.addEventListener('change', (e) => {
         const id = e.target.dataset.subjToggle;
-        const subj = window.DataStore.data.availableSubjects.find((x) => x.id === id);
-        if (subj) subj.enabled = e.target.checked;
-        window.DataStore.saveDebounced();
+        try {
+          window.DataStore.updateSubject(id, { enabled: e.target.checked });
+        } catch (err) { /* ignore */ }
         renderSubjectCards();
         renderPreview();
         refreshSelector();
       });
     });
+
+    box.querySelectorAll('[data-subj-up]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (window.DataStore.moveSubject(btn.dataset.subjUp, 'up')) {
+          renderSubjectsConfig();
+          renderSubjectCards();
+          renderPreview();
+        }
+      });
+    });
+
+    box.querySelectorAll('[data-subj-down]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (window.DataStore.moveSubject(btn.dataset.subjDown, 'down')) {
+          renderSubjectsConfig();
+          renderSubjectCards();
+          renderPreview();
+        }
+      });
+    });
+
+    box.querySelectorAll('[data-subj-edit]').forEach((btn) => {
+      btn.addEventListener('click', () => openEditSubjectModal(btn.dataset.subjEdit));
+    });
+
+    box.querySelectorAll('[data-subj-del]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.subjDel;
+        const subj = (window.DataStore.data.availableSubjects || []).find((x) => x.id === id);
+        if (!subj) return;
+        const isCustom = window.DataStore.isCustomSubject(subj);
+        const msg = isCustom
+          ? `${t('confirmDeleteSubject')}\n「${subj.name}」`
+          : `${t('confirmDeleteBuiltin')}\n「${subj.name}」`;
+        if (!confirm(msg)) return;
+        window.DataStore.deleteSubject(id);
+        renderSubjectsConfig();
+        renderSubjectCards();
+        renderPreview();
+        refreshSelector();
+        toast(t('toastSubjectDeleted'));
+      });
+    });
+  }
+
+  function openEditSubjectModal(id) {
+    const subj = (window.DataStore.data.availableSubjects || []).find((x) => x.id === id);
+    if (!subj) return;
+    refreshCategorySelects();
+    $('edit-subj-id').value = subj.id;
+    $('edit-subj-name').value = subj.name || '';
+    $('edit-subj-zh').value = subj.chineseName || '';
+    $('edit-subj-cat').value = subj.category || 'other';
+    $('edit-subject-modal').classList.add('active');
+    setTimeout(() => $('edit-subj-name').focus(), 50);
+  }
+
+  function closeEditSubjectModal() {
+    $('edit-subject-modal').classList.remove('active');
   }
 
   function defaultGrade() {
@@ -173,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return `
         <article class="subject-card" data-card="${subj.id}">
           <div class="subject-card-head">
-            <h3 class="subject-name">${subj.name}</h3>
+            <h3 class="subject-name">${window.DataStore.subjectDisplayName(subj)}</h3>
           </div>
           <div class="score-row">
             <div class="score-field">
@@ -317,6 +429,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.App.onLocaleChange = () => {
     refreshSelector();
+    refreshCategorySelects();
+    renderSubjectsConfig();
     renderSubjectCards();
     renderPreview();
     if (saveStatusText && !saveStatusText.textContent.includes(':')) {
@@ -526,6 +640,62 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast(t('toastSample'));
   });
 
+  // —— 自訂科目 ——
+  $('btn-add-subject').addEventListener('click', () => {
+    const name = ($('input-new-subj-name').value || '').trim();
+    const chineseName = ($('input-new-subj-zh').value || '').trim();
+    const category = $('select-new-subj-cat').value || 'other';
+    if (!name) {
+      alert(t('alertSubjectName'));
+      $('input-new-subj-name').focus();
+      return;
+    }
+    try {
+      window.DataStore.addCustomSubject({ name, chineseName, category, enabled: true });
+      $('input-new-subj-name').value = '';
+      $('input-new-subj-zh').value = '';
+      $('select-new-subj-cat').value = 'other';
+      renderSubjectsConfig();
+      renderSubjectCards();
+      renderPreview();
+      refreshSelector();
+      toast(t('toastSubjectAdded') + '「' + name + '」');
+    } catch (err) {
+      alert(t('alertSubjectName'));
+    }
+  });
+  $('input-new-subj-name').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); $('btn-add-subject').click(); }
+  });
+
+  $('edit-subject-close').addEventListener('click', closeEditSubjectModal);
+  $('btn-edit-subject-cancel').addEventListener('click', closeEditSubjectModal);
+  $('edit-subject-modal').addEventListener('click', (e) => {
+    if (e.target === $('edit-subject-modal')) closeEditSubjectModal();
+  });
+  $('btn-edit-subject-save').addEventListener('click', () => {
+    const id = $('edit-subj-id').value;
+    const name = ($('edit-subj-name').value || '').trim();
+    if (!name) {
+      alert(t('alertSubjectName'));
+      return;
+    }
+    try {
+      window.DataStore.updateSubject(id, {
+        name,
+        chineseName: ($('edit-subj-zh').value || '').trim(),
+        category: $('edit-subj-cat').value || 'other'
+      });
+      closeEditSubjectModal();
+      renderSubjectsConfig();
+      renderSubjectCards();
+      renderPreview();
+      toast(t('toastSubjectRenamed'));
+    } catch (err) {
+      alert(t('alertSubjectName'));
+    }
+  });
+
   // —— 縮放 ——
   $('btn-zoom-in').addEventListener('click', () => setZoom(currentZoom + 0.06));
   $('btn-zoom-out').addEventListener('click', () => setZoom(currentZoom - 0.06));
@@ -545,5 +715,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   setZoom(currentZoom);
+  refreshCategorySelects();
   loadStudentForm();
 });

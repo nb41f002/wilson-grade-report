@@ -1,8 +1,36 @@
-/* A4 Landscape print — letter badges, no overflow, break-inside avoid */
+/* Quiet Ledger — A4 landscape print */
+
+/* Quiet Ledger print vars (mirrored for print context) */
+:root {
+  --navy-900: #0c1827;
+  --navy-800: #1a2f4c;
+  --navy-700: #1a365d;
+  --navy-500: #2b4c7e;
+  --ink: #1a202c;
+  --ink-soft: #4a5568;
+  --rule: #c5cdd8;
+  --rule-strong: #1a2f4c;
+  --paper: #ffffff;
+  --paper-tint: #f4f7fb;
+  --gold-600: #b8860b;
+  --gold-400: #d4af37;
+  --gold-line: #c9a227;
+  --ee-bg: #e6f4ea; --ee-fg: #1e5a3a; --ee-bd: #9bc5a9;
+  --me-bg: #e8f0fa; --me-fg: #1a365d; --me-bd: #9bb4d4;
+  --ae-bg: #faf3e0; --ae-fg: #7a5b12; --ae-bd: #e0c98a;
+  --be-bg: #f8ebe4; --be-fg: #7a3b1e; --be-bd: #e0b39a;
+  --fs-school: 13pt; --fs-term: 9.5pt; --fs-student: 11.5pt; --fs-meta: 8pt;
+  --fs-th: 7.5pt; --fs-td: 8.5pt; --fs-comment: 8pt; --fs-legend: 6.5pt;
+  --fs-sig: 7.5pt; --fs-zh-aux: 6.5pt;
+  --font-en: "Times New Roman", Georgia, serif;
+  --font-zh: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
+  --font-ui: "Segoe UI", "Noto Sans TC", sans-serif;
+  --report-bg: url("../assets/report-bg.png");
+}
 
 @page {
   size: A4 landscape;
-  margin: 6mm 7mm;
+  margin: 8mm 10mm;
 }
 
 @media print {
@@ -24,7 +52,7 @@
     width: auto !important;
     height: auto !important;
     overflow: visible !important;
-    color: #000 !important;
+    color: var(--ink, #1a202c) !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -50,12 +78,12 @@
   }
 
   .report-sheet.a4-landscape {
-    width: 283mm !important;
-    height: 198mm !important;
-    max-height: 198mm !important;
+    width: 277mm !important; /* A4 landscape 297 − 10 − 10 */
+    height: 194mm !important; /* A4 landscape 210 − 8 − 8 */
+    max-height: 194mm !important;
     min-height: 0 !important;
     margin: 0 auto !important;
-    padding: 4mm 7mm 3mm !important;
+    padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
@@ -67,6 +95,11 @@
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
+    background-color: var(--paper, #fff) !important;
+    background-image: var(--report-bg, none) !important;
+    background-size: 100% 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .report-sheet.a4-landscape:last-child {
@@ -74,22 +107,84 @@
     break-after: auto !important;
   }
 
+
+  .report-header,
+  .report-body,
+  .report-footer {
+    background: transparent !important;
+  }
+
+  .school-name {
+    font-size: var(--fs-school, 13pt) !important;
+    color: var(--navy-900, #0c1827) !important;
+  }
+  .school-name-zh {
+    font-size: var(--fs-zh-aux, 6.5pt) !important;
+    color: var(--ink-soft, #4a5568) !important;
+  }
+  .ql-name-rules {
+    border-top: 1pt solid var(--gold-line, #c9a227) !important;
+    box-shadow: 0 1.5pt 0 0 var(--navy-800, #1a2f4c) !important;
+  }
+  .academic-year {
+    font-size: var(--fs-meta, 8pt) !important;
+    color: var(--ink-soft, #4a5568) !important;
+  }
+  .term-title {
+    font-size: var(--fs-term, 9.5pt) !important;
+    color: var(--navy-700, #1a365d) !important;
+  }
+  .ql-page {
+    font-size: var(--fs-meta, 8pt) !important;
+    color: var(--ink-soft, #4a5568) !important;
+  }
+  .student-name-en {
+    font-size: var(--fs-student, 11.5pt) !important;
+    color: var(--navy-900, #0c1827) !important;
+  }
+  .student-name-zh {
+    font-size: 9.5pt !important;
+    color: var(--ink-soft, #4a5568) !important;
+  }
+  .crest-icon {
+    width: 38px !important;
+    height: 44px !important;
+  }
+
   .report-table {
     border-collapse: collapse !important;
     width: 100% !important;
     max-width: 100% !important;
     table-layout: fixed !important;
-    border: 1.4pt solid #000 !important;
+    border: 1pt solid var(--rule-strong, #1a2f4c) !important;
+    background: transparent !important;
   }
 
   .report-table th,
   .report-table td {
-    border: 0.8pt solid #111 !important;
+    border: 0.6pt solid var(--rule-strong, #1a2f4c) !important;
   }
 
   .report-table thead th {
-    background-color: #e8ecf0 !important;
-    color: #000 !important;
+    background-color: rgba(244, 247, 251, 0.92) !important;
+    color: var(--navy-800, #1a2f4c) !important;
+    font-size: var(--fs-th, 7.5pt) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .th-en {
+    display: block !important;
+    font-family: var(--font-en, "Times New Roman", Georgia, serif) !important;
+    font-size: var(--fs-th, 7.5pt) !important;
+    color: var(--navy-800, #1a2f4c) !important;
+  }
+
+  .th-zh {
+    display: block !important;
+    font-family: var(--font-zh, "Noto Serif TC", "Songti TC", serif) !important;
+    font-size: var(--fs-zh-aux, 6.5pt) !important;
+    color: var(--ink-soft, #4a5568) !important;
   }
 
   .report-table tr,
@@ -99,22 +194,36 @@
   }
 
   .row-alt td {
-    background-color: #f5f7fa !important;
+    background-color: rgba(244, 247, 251, 0.55) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .th-weight {
-    background: #fefcbf !important;
-    color: #000 !important;
+    background: rgba(250, 243, 224, 0.95) !important;
+    color: var(--navy-700, #1a365d) !important;
+    border: 0.5pt solid var(--ae-bd, #e0c98a) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .th-zh {
-    color: #444 !important;
+  .th-sub-row th {
+    background: rgba(244, 247, 251, 0.72) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
+
+  .col-subject,
+  .col-score,
+  .col-overall {
+    font-size: var(--fs-td, 8.5pt) !important;
+  }
+  .col-overall { font-size: 10.5pt !important; }
 
   .assessment-content {
-    font-size: 8pt !important;
+    font-size: var(--fs-comment, 8pt) !important;
     line-height: 1.3 !important;
-    color: #111 !important;
+    color: var(--ink, #1a202c) !important;
   }
 
   .conduct-badge {
@@ -122,34 +231,35 @@
     align-items: center !important;
     justify-content: center !important;
     min-width: 18px !important;
-    height: 14px !important;
+    height: 13px !important;
     padding: 0 4px !important;
     font-size: 6.5pt !important;
     font-weight: 800 !important;
     border-radius: 999px !important;
+    border-width: 0.5pt !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
   .conduct-ee {
-    background: #c6f6d5 !important;
-    color: #22543d !important;
-    border-color: #9ae6b4 !important;
+    background: var(--ee-bg, #e6f4ea) !important;
+    color: var(--ee-fg, #1e5a3a) !important;
+    border-color: var(--ee-bd, #9bc5a9) !important;
   }
   .conduct-me {
-    background: #bee3f8 !important;
-    color: #2a4365 !important;
-    border-color: #90cdf4 !important;
+    background: var(--me-bg, #e8f0fa) !important;
+    color: var(--me-fg, #1a365d) !important;
+    border-color: var(--me-bd, #9bb4d4) !important;
   }
   .conduct-ae {
-    background: #fefcbf !important;
-    color: #744210 !important;
-    border-color: #f6e05e !important;
+    background: var(--ae-bg, #faf3e0) !important;
+    color: var(--ae-fg, #7a5b12) !important;
+    border-color: var(--ae-bd, #e0c98a) !important;
   }
   .conduct-be {
-    background: #feebc8 !important;
-    color: #7b341e !important;
-    border-color: #fbd38d !important;
+    background: var(--be-bg, #f8ebe4) !important;
+    color: var(--be-fg, #7a3b1e) !important;
+    border-color: var(--be-bd, #e0b39a) !important;
   }
 
   .col-conduct {
@@ -158,31 +268,41 @@
   }
 
   .conduct-legend {
-    font-size: 6.5pt !important;
+    font-size: var(--fs-legend, 6.5pt) !important;
     margin-top: 1.5mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 
-  .crest-icon {
-    width: 36px !important;
-    height: 42px !important;
+  .sig-date-hint {
+    font-size: 6.5pt !important;
+    color: var(--ink-soft, #4a5568) !important;
   }
 
-  .school-name { font-size: 14pt !important; }
-  .term-title { font-size: 11pt !important; }
-  .student-name-val { font-size: 12pt !important; }
-  .academic-year { font-size: 9.5pt !important; }
+  .signature-grid {
+    gap: 8px 14px !important;
+    margin-top: 2mm !important;
+    border-top: 0.6pt solid var(--rule, #c5cdd8) !important;
+    padding-top: 1.5mm !important;
+  }
 
-  .flag-chip {
-    background: #ebf8ff !important;
-    border: 0.6pt solid #666 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  .sig-title {
+    color: var(--navy-700, #1a365d) !important;
+    font-size: var(--fs-sig, 7.5pt) !important;
+    font-weight: 700 !important;
   }
 
   .sig-line {
-    border-bottom: 0.8pt solid #000 !important;
+    margin-top: 7mm !important;
+    border-bottom: 0.8pt solid var(--rule-strong, #1a2f4c) !important;
+  }
+
+  .flag-chip {
+    background: rgba(232, 240, 250, 0.9) !important;
+    border: 0.5pt solid var(--me-bd, #9bb4d4) !important;
+    color: var(--me-fg, #1a365d) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .report-footer {
