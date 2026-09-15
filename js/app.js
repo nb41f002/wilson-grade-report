@@ -1,0 +1,515 @@
+/**
+ * Wilson 雙語成績報告系統 — 主應用
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+  let currentStudentIndex = 0;
+  let currentZoom = 0.72;
+  let activeCommentTarget = null;
+  let previewMode = 'current'; // current | all
+
+  await window.DataStore.init();
+
+  const $ = (id) => document.getElementById(id);
+  const studentSelect = $('student-select');
+  const studentCounter = $('student-counter');
+  const progressFill = $('progress-fill');
+  const subjectList = $('subject-list');
+  const reportViewport = $('report-viewport');
+  const zoomVal = $('zoom-val');
+  const saveStatusText = $('save-status-text');
+
+  function toast(msg, ms = 2200) {
+    let el = $('app-toast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'app-toast';
+      el.className = 'toast-bar';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), ms);
+  }
+
+  function setZoom(v) {
+    currentZoom = Math.min(1.2, Math.max(0.35, Math.round(v * 100) / 100));
+    reportViewport.style.setProperty('--preview-scale', String(currentZoom));
+    zoomVal.textContent = `${Math.round(currentZoom * 100)}%`;
+  }
+
+  function currentStudent() {
+    return window.DataStore.data.students[currentStudentIndex];
+  }
+
+  function refreshSelector() {
+    const students = window.DataStore.data.students;
+    studentSelect.innerHTML = students.map((stu, idx) => {
+      const label = `${stu.seatNo ? stu.seatNo + ' ' : ''}${stu.chineseName || ''} ${stu.englishName || ''}`.trim() || `學生 ${idx + 1}`;
+      return `<option value="${idx}"${idx === currentStudentIndex ? ' selected' : ''}>${label}</option>`;
+    }).join('');
+    const prog = window.DataStore.countFilledStudents();
+    studentCounter.textContent = `${currentStudentIndex + 1} / ${students.length} 人 · 已填 ${prog.filled}`;
+    const pct = students.length ? Math.round((prog.filled / students.length) * 100) : 0;
+    if (progressFill) progressFill.style.width = pct + '%';
+    $('btn-prev-student').disabled = currentStudentIndex <= 0;
+    $('btn-next-student').disabled = currentStudentIndex >= students.length - 1;
+  }
+
+  function ensureStudent() {
+    if (!window.DataStore.data.students.length) {
+      window.DataStore.data.students.push(window.DataStore.normalizeStudent({
+        chineseName: '新學生',
+        englishName: 'Student',
+        seatNo: '01'
+      }, 0));
+      window.DataStore.saveImmediate();
+    }
+    if (currentStudentIndex >= window.DataStore.data.students.length) {
+      currentStudentIndex = window.DataStore.data.students.length - 1;
+    }
+  }
+
+  function loadStudentForm() {
+    ensureStudent();
+    const stu = currentStudent();
+    $('input-chinese-name').value = stu.chineseName || '';
+    $('input-english-name').value = stu.englishName || '';
+    $('input-class-grade').value = stu.classGrade || '';
+    $('input-student-id').value = stu.studentId || '';
+    $('flag-intl').checked = !!stu.flags.internationalStudent;
+    $('flag-conduct').checked = !!stu.flags.independentConduct;
+    $('flag-ixl').checked = !!stu.flags.ixlNote;
+    $('flag-map').checked = !!stu.flags.mapPrintNote;
+
+    const si = window.DataStore.data.schoolInfo;
+    $('input-term').value = si.term || 'Midterm';
+    $('input-year').value = si.academicYear || '';
+    $('input-weight-mid').value = si.weights.midterm;
+    $('input-weight-daily').value = si.weights.daily;
+    $('chk-homeroom').checked = si.showHomeroomLine !== false;
+
+    refreshSelector();
+    renderSubjectCards();
+    renderSubjectsConfig();
+    renderPreview();
+  }
+
+  function renderSubjectsConfig() {
+    const box = $('subjects-config');
+    if (!box) return;
+    box.innerHTML = window.DataStore.data.availableSubjects.map((s) => `
+      <label class="subj-toggle">
+        <input type="checkbox" data-subj-toggle="${s.id}" ${s.enabled !== false ? 'checked' : ''}>
+        <span>${s.name}</span>
+      </label>
+    `).join('');
+    box.querySelectorAll('[data-subj-toggle]').forEach((chk) => {
+      chk.addEventListener('change', (e) => {
+        const id = e.target.dataset.subjToggle;
+        const subj = window.DataStore.data.availableSubjects.find((x) => x.id === id);
+        if (subj) subj.enabled = e.target.checked;
+        window.DataStore.saveDebounced();
+        renderSubjectCards();
+        renderPreview();
+        refreshSelector();
+      });
+    });
+  }
+
+  function defaultGrade() {
+    return {
+      midterm: '',
+      daily: '',
+      overall: '',
+      isManualOverall: false,
+      conduct: {
+        performance: 'excellent',
+        teamwork: 'excellent',
+        assignment: 'excellent',
+        behavior: 'excellent'
+      },
+      comment: ''
+    };
+  }
+
+  function renderConductPicker(subjId, dim, label, active) {
+    const levels = [
+      { val: 'excellent', icon: '😀', tip: '優良' },
+      { val: 'good', icon: '🙂', tip: '良好' },
+      { val: 'satisfactory', icon: '😐', tip: '尚可' },
+      { val: 'needs-improvement', icon: '😟', tip: '加強' }
+    ];
+    const btns = levels.map((l) =>
+      `<button type="button" class="emoji-btn${active === l.val || (active === 'warning' && l.val === 'needs-improvement') ? ' active' : ''}" data-subj="${subjId}" data-dim="${dim}" data-val="${l.val}" title="${l.tip}">${l.icon}</button>`
+    ).join('');
+    return `<div class="conduct-box"><div class="conduct-box-label">${label}</div><div class="emoji-btn-group">${btns}</div></div>`;
+  }
+
+  function renderSubjectCards() {
+    const stu = currentStudent();
+    if (!stu.grades) stu.grades = {};
+    const weights = window.DataStore.data.schoolInfo.weights;
+    const subjects = window.DataStore.enabledSubjects();
+
+    subjectList.innerHTML = subjects.map((subj) => {
+      const g = Object.assign(defaultGrade(), stu.grades[subj.id] || {});
+      if (!stu.grades[subj.id]) stu.grades[subj.id] = g;
+      const overall = window.DataStore.calculateOverall(g.midterm, g.daily, g.isManualOverall, g.overall);
+      return `
+        <article class="subject-card" data-card="${subj.id}">
+          <div class="subject-card-head">
+            <h3 class="subject-name">${subj.name}</h3>
+          </div>
+          <div class="score-row">
+            <div class="score-field">
+              <label>期中考 ${weights.midterm}%</label>
+              <input type="number" min="0" max="100" inputmode="numeric" class="score-input" data-field="midterm" data-subj="${subj.id}" value="${g.midterm !== '' && g.midterm !== undefined ? g.midterm : ''}" placeholder="0–100">
+            </div>
+            <div class="score-field">
+              <label>平時成績 ${weights.daily}%</label>
+              <input type="number" min="0" max="100" inputmode="numeric" class="score-input" data-field="daily" data-subj="${subj.id}" value="${g.daily !== '' && g.daily !== undefined ? g.daily : ''}" placeholder="0–100">
+            </div>
+            <div class="score-field">
+              <label>總評 Overall</label>
+              <div class="overall-wrap">
+                <input type="number" min="0" max="100" class="score-input overall-input" data-field="overall" data-subj="${subj.id}" value="${overall !== '' ? overall : ''}" ${g.isManualOverall ? '' : 'readonly'}>
+                <label class="manual-chk"><input type="checkbox" data-manual="${subj.id}" ${g.isManualOverall ? 'checked' : ''}> 手動</label>
+              </div>
+            </div>
+          </div>
+          <div class="conduct-picker-row">
+            ${renderConductPicker(subj.id, 'performance', '表現', g.conduct.performance)}
+            ${renderConductPicker(subj.id, 'teamwork', '合作', g.conduct.teamwork)}
+            ${renderConductPicker(subj.id, 'assignment', '作業', g.conduct.assignment)}
+            ${renderConductPicker(subj.id, 'behavior', '常規', g.conduct.behavior)}
+          </div>
+          <div class="comment-block">
+            <div class="comment-toolbar">
+              <label>教師評語 Teacher Assessment</label>
+              <button type="button" class="btn btn-sm btn-secondary btn-open-bank" data-subj="${subj.id}">📖 評語庫</button>
+            </div>
+            <textarea class="comment-textarea" data-subj="${subj.id}" rows="3" placeholder="點評語庫插入，或自行輸入…">${g.comment || ''}</textarea>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    bindSubjectEvents();
+  }
+
+  function ensureGrade(subjId) {
+    const stu = currentStudent();
+    if (!stu.grades[subjId]) stu.grades[subjId] = defaultGrade();
+    if (!stu.grades[subjId].conduct) {
+      stu.grades[subjId].conduct = {
+        performance: 'excellent', teamwork: 'excellent',
+        assignment: 'excellent', behavior: 'excellent'
+      };
+    }
+    return stu.grades[subjId];
+  }
+
+  function bindSubjectEvents() {
+    subjectList.querySelectorAll('.score-input').forEach((input) => {
+      input.addEventListener('input', (e) => {
+        const subjId = e.target.dataset.subj;
+        const field = e.target.dataset.field;
+        const g = ensureGrade(subjId);
+        const raw = e.target.value;
+        if (field === 'overall') {
+          g.overall = raw === '' ? '' : Number(raw);
+          g.isManualOverall = true;
+          const chk = subjectList.querySelector(`[data-manual="${subjId}"]`);
+          if (chk) chk.checked = true;
+        } else {
+          g[field] = raw === '' ? '' : Number(raw);
+          if (!g.isManualOverall) {
+            const ov = window.DataStore.calculateOverall(g.midterm, g.daily, false, '');
+            const ovInput = subjectList.querySelector(`.overall-input[data-subj="${subjId}"]`);
+            if (ovInput) ovInput.value = ov !== '' ? ov : '';
+            g.overall = ov;
+          }
+        }
+        window.DataStore.saveDebounced();
+        renderPreview();
+        refreshSelector();
+      });
+    });
+
+    subjectList.querySelectorAll('[data-manual]').forEach((chk) => {
+      chk.addEventListener('change', (e) => {
+        const subjId = e.target.dataset.manual;
+        const g = ensureGrade(subjId);
+        g.isManualOverall = e.target.checked;
+        const ovInput = subjectList.querySelector(`.overall-input[data-subj="${subjId}"]`);
+        if (ovInput) {
+          ovInput.readOnly = !e.target.checked;
+          if (!e.target.checked) {
+            const ov = window.DataStore.calculateOverall(g.midterm, g.daily, false, '');
+            ovInput.value = ov !== '' ? ov : '';
+            g.overall = ov;
+          }
+        }
+        window.DataStore.saveImmediate();
+        renderPreview();
+      });
+    });
+
+    subjectList.querySelectorAll('.emoji-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const b = e.target.closest('.emoji-btn');
+        const g = ensureGrade(b.dataset.subj);
+        g.conduct[b.dataset.dim] = b.dataset.val;
+        b.closest('.emoji-btn-group').querySelectorAll('.emoji-btn').forEach((x) => x.classList.remove('active'));
+        b.classList.add('active');
+        window.DataStore.saveDebounced();
+        renderPreview();
+      });
+    });
+
+    subjectList.querySelectorAll('.comment-textarea').forEach((ta) => {
+      ta.addEventListener('input', (e) => {
+        ensureGrade(e.target.dataset.subj).comment = e.target.value;
+        window.DataStore.saveDebounced();
+        renderPreview();
+        refreshSelector();
+      });
+    });
+
+    subjectList.querySelectorAll('.btn-open-bank').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        activeCommentTarget = e.target.closest('[data-subj]').dataset.subj;
+        openCommentModal();
+      });
+    });
+  }
+
+  function renderPreview() {
+    const schoolInfo = window.DataStore.data.schoolInfo;
+    const subjects = window.DataStore.data.availableSubjects;
+    if (previewMode === 'all') {
+      reportViewport.innerHTML = window.DataStore.data.students
+        .map((stu) => window.ReportRenderer.renderStudentReport(stu, schoolInfo, subjects))
+        .join('');
+    } else {
+      const stu = currentStudent();
+      if (!stu) return;
+      reportViewport.innerHTML = window.ReportRenderer.renderStudentReport(stu, schoolInfo, subjects);
+    }
+  }
+
+  // —— 基本資料 ——
+  ['input-chinese-name', 'input-english-name', 'input-class-grade', 'input-student-id'].forEach((id) => {
+    $(id).addEventListener('input', () => {
+      const stu = currentStudent();
+      stu.chineseName = $('input-chinese-name').value;
+      stu.englishName = $('input-english-name').value;
+      stu.classGrade = $('input-class-grade').value;
+      stu.studentId = $('input-student-id').value;
+      refreshSelector();
+      renderPreview();
+      window.DataStore.saveDebounced();
+    });
+  });
+
+  [['flag-intl', 'internationalStudent'], ['flag-conduct', 'independentConduct'], ['flag-ixl', 'ixlNote'], ['flag-map', 'mapPrintNote']].forEach(([id, key]) => {
+    $(id).addEventListener('change', (e) => {
+      currentStudent().flags[key] = e.target.checked;
+      window.DataStore.saveDebounced();
+      renderPreview();
+    });
+  });
+
+  $('input-term').addEventListener('input', (e) => {
+    window.DataStore.data.schoolInfo.term = e.target.value || 'Midterm';
+    window.DataStore.saveDebounced();
+    renderPreview();
+  });
+  $('input-year').addEventListener('input', (e) => {
+    window.DataStore.data.schoolInfo.academicYear = e.target.value;
+    window.DataStore.saveDebounced();
+    renderPreview();
+  });
+  function syncWeights() {
+    const m = Number($('input-weight-mid').value) || 40;
+    const d = Number($('input-weight-daily').value) || 60;
+    window.DataStore.data.schoolInfo.weights.midterm = m;
+    window.DataStore.data.schoolInfo.weights.daily = d;
+    window.DataStore.saveDebounced();
+    renderSubjectCards();
+    renderPreview();
+  }
+  $('input-weight-mid').addEventListener('change', syncWeights);
+  $('input-weight-daily').addEventListener('change', syncWeights);
+  $('chk-homeroom').addEventListener('change', (e) => {
+    window.DataStore.data.schoolInfo.showHomeroomLine = e.target.checked;
+    window.DataStore.saveDebounced();
+    renderPreview();
+  });
+
+  // —— 學生導覽 ——
+  studentSelect.addEventListener('change', (e) => {
+    currentStudentIndex = Number(e.target.value);
+    loadStudentForm();
+  });
+  $('btn-prev-student').addEventListener('click', () => {
+    if (currentStudentIndex > 0) { currentStudentIndex--; loadStudentForm(); }
+  });
+  $('btn-next-student').addEventListener('click', () => {
+    if (currentStudentIndex < window.DataStore.data.students.length - 1) {
+      currentStudentIndex++;
+      loadStudentForm();
+    }
+  });
+  $('btn-add-student').addEventListener('click', () => {
+    const students = window.DataStore.data.students;
+    const n = students.length + 1;
+    const seat = String(n).padStart(2, '0');
+    students.push(window.DataStore.normalizeStudent({
+      seatNo: seat,
+      chineseName: `學生${seat}`,
+      englishName: `Student ${seat}`,
+      classGrade: students[0]?.classGrade || 'Grade 4 / 401'
+    }, n - 1));
+    currentStudentIndex = students.length - 1;
+    window.DataStore.saveImmediate();
+    loadStudentForm();
+    toast(`已新增學生 ${seat}`);
+  });
+  $('btn-delete-student').addEventListener('click', () => {
+    const students = window.DataStore.data.students;
+    if (students.length <= 1) { alert('至少保留一位學生'); return; }
+    const stu = students[currentStudentIndex];
+    if (!confirm(`確定刪除「${stu.chineseName} ${stu.englishName}」？`)) return;
+    students.splice(currentStudentIndex, 1);
+    if (currentStudentIndex >= students.length) currentStudentIndex = students.length - 1;
+    window.DataStore.saveImmediate();
+    loadStudentForm();
+    toast('已刪除');
+  });
+
+  // —— 評語庫 ——
+  function openCommentModal() {
+    const stu = currentStudent();
+    $('comment-bank-container').innerHTML = window.Comments.renderBankHtml(stu.englishName, stu.chineseName);
+    $('comment-modal').classList.add('active');
+    $('comment-bank-container').querySelectorAll('.comment-item-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const text = decodeURIComponent(btn.dataset.text);
+        if (!activeCommentTarget) return;
+        const g = ensureGrade(activeCommentTarget);
+        g.comment = g.comment ? `${g.comment} ${text}` : text;
+        const ta = subjectList.querySelector(`.comment-textarea[data-subj="${activeCommentTarget}"]`);
+        if (ta) ta.value = g.comment;
+        window.DataStore.saveDebounced();
+        renderPreview();
+        closeCommentModal();
+        toast('已插入評語');
+      });
+    });
+  }
+  function closeCommentModal() {
+    $('comment-modal').classList.remove('active');
+    activeCommentTarget = null;
+  }
+  $('comment-modal-close').addEventListener('click', closeCommentModal);
+  $('comment-modal').addEventListener('click', (e) => { if (e.target === $('comment-modal')) closeCommentModal(); });
+
+  // —— 批次匯入 ——
+  $('btn-batch-import').addEventListener('click', () => $('batch-modal').classList.add('active'));
+  $('batch-modal-close').addEventListener('click', () => $('batch-modal').classList.remove('active'));
+  $('btn-batch-submit').addEventListener('click', () => {
+    const raw = $('batch-textarea').value.trim();
+    if (!raw) return;
+    const lines = raw.split('\n').map((l) => l.trim()).filter(Boolean);
+    const classGrade = window.DataStore.data.students[0]?.classGrade || 'Grade 4 / 401';
+    const newStudents = lines.map((line, idx) => {
+      const parts = line.split(/\s+/);
+      let seatNo = String(idx + 1).padStart(2, '0');
+      let cName = '';
+      let eName = '';
+      if (/^\d+$/.test(parts[0])) {
+        seatNo = String(parts[0]).padStart(2, '0');
+        cName = parts[1] || `學生${seatNo}`;
+        eName = parts.slice(2).join(' ') || '';
+      } else {
+        cName = parts[0] || `學生${seatNo}`;
+        eName = parts.slice(1).join(' ') || '';
+      }
+      return window.DataStore.normalizeStudent({
+        seatNo, chineseName: cName, englishName: eName, classGrade, grades: {}
+      }, idx);
+    });
+    window.DataStore.data.students = newStudents;
+    currentStudentIndex = 0;
+    window.DataStore.saveImmediate();
+    loadStudentForm();
+    $('batch-modal').classList.remove('active');
+    $('batch-textarea').value = '';
+    toast(`已匯入 ${newStudents.length} 位學生`);
+  });
+
+  // —— 列印 / 備份 ——
+  $('btn-print-current').addEventListener('click', () => {
+    previewMode = 'current';
+    renderPreview();
+    setTimeout(() => window.print(), 80);
+  });
+  $('btn-print-all').addEventListener('click', () => {
+    const n = window.DataStore.data.students.length;
+    if (!confirm(`即將列印全班 ${n} 位學生成績單，確定？`)) return;
+    previewMode = 'all';
+    renderPreview();
+    setTimeout(() => {
+      window.print();
+      previewMode = 'current';
+      renderPreview();
+    }, 120);
+  });
+  $('btn-export-json').addEventListener('click', () => {
+    window.DataStore.exportJsonFile();
+    toast('已匯出 JSON 備份');
+  });
+  $('file-import-input').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      await window.DataStore.importJsonFile(file);
+      currentStudentIndex = 0;
+      loadStudentForm();
+      toast('匯入成功');
+    } catch (err) {
+      alert('匯入失敗：' + err.message);
+    }
+    e.target.value = '';
+  });
+  $('btn-reset-sample').addEventListener('click', async () => {
+    if (!confirm('載入示範資料（林詩穎 Alice）？目前資料會被覆蓋。')) return;
+    await window.DataStore.resetToSample();
+    currentStudentIndex = 0;
+    loadStudentForm();
+    toast('已載入示範資料');
+  });
+
+  // —— 縮放 ——
+  $('btn-zoom-in').addEventListener('click', () => setZoom(currentZoom + 0.06));
+  $('btn-zoom-out').addEventListener('click', () => setZoom(currentZoom - 0.06));
+  $('btn-zoom-reset').addEventListener('click', () => setZoom(0.72));
+
+  window.DataStore.onChange((type) => {
+    if (String(type).startsWith('saved:')) {
+      saveStatusText.textContent = '已自動暫存 ' + String(type).slice(6);
+    }
+  });
+
+  window.addEventListener('afterprint', () => {
+    if (previewMode !== 'current') {
+      previewMode = 'current';
+      renderPreview();
+    }
+  });
+
+  setZoom(currentZoom);
+  loadStudentForm();
+});

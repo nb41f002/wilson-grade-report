@@ -1,0 +1,184 @@
+{
+  "schoolInfo": {
+    "name": "Wilson International Elementary School",
+    "academicYear": "The Second Semester of the 114th Academic Year",
+    "term": "Midterm",
+    "weights": { "midterm": 40, "daily": 60 },
+    "signatures": {
+      "teacher": "Teacher / 教師",
+      "director": "Director / 主任",
+      "principal": "Principal / 校長",
+      "homeroom": "導師"
+    },
+    "showHomeroomLine": true,
+    "flags": {
+      "internationalStudent": false,
+      "independentConduct": false,
+      "ixlNote": false,
+      "mapPrintNote": false
+    },
+    "notes": {
+      "ixl": "IXL progress report attached.",
+      "map": "MAP Growth scores available upon request."
+    }
+  },
+  "availableSubjects": [
+    { "id": "la", "name": "Language Arts", "enabled": true },
+    { "id": "math", "name": "Mathematics", "enabled": true },
+    { "id": "wss", "name": "Western Social Studies", "enabled": true },
+    { "id": "music", "name": "Music", "enabled": true },
+    { "id": "art", "name": "Art", "enabled": true },
+    { "id": "health", "name": "Health", "enabled": true },
+    { "id": "gp", "name": "G.P.", "enabled": true },
+    { "id": "phonics", "name": "Phonics", "enabled": true },
+    { "id": "writing", "name": "作文", "enabled": true },
+    { "id": "singing", "name": "中唱", "enabled": true },
+    { "id": "social", "name": "中社", "enabled": true }
+  ],
+  "students": [
+    {
+      "id": "s01",
+      "seatNo": "01",
+      "chineseName": "林詩穎",
+      "englishName": "Alice",
+      "classGrade": "Grade 4 / 401",
+      "studentId": "W114028",
+      "flags": {
+        "internationalStudent": false,
+        "independentConduct": false,
+        "ixlNote": false,
+        "mapPrintNote": false
+      },
+      "grades": {
+        "la": {
+          "midterm": 83,
+          "daily": 93,
+          "overall": 88,
+          "isManualOverall": true,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice is a highly motivated, patient, attentive, and capable learner. She shows good concentration during lessons and has developed effective study habits. She is a little quiet sometimes, but her answers are almost all correct."
+        },
+        "math": {
+          "midterm": 100,
+          "daily": 90,
+          "overall": 95,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice achieved a perfect score—wonderful work! She shows excellent understanding and works very carefully. Her effort is excellent. Keep it up!"
+        },
+        "wss": {
+          "midterm": 88,
+          "daily": 92,
+          "overall": 90,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice has grown wonderfully this term. She is attentive, helpful, and her confidence in supporting both her own learning and that of her peers has strengthened noticeably."
+        },
+        "music": {
+          "midterm": 92,
+          "daily": 95,
+          "overall": 94,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice demonstrates great rhythm and musical expression. She participates enthusiastically in choral singing and group performances."
+        },
+        "art": {
+          "midterm": 90,
+          "daily": 94,
+          "overall": 92,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Her creativity in visual arts is commendable. Alice puts deep thought into color palettes and composition in every project."
+        },
+        "health": {
+          "midterm": 86,
+          "daily": 92,
+          "overall": 90,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice displays positive sportsmanship and active involvement in all physical activities. Great teamwork!"
+        },
+        "gp": {
+          "midterm": 89,
+          "daily": 91,
+          "overall": 90,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Alice shows curious inquiry towards global cultural topics and expresses her viewpoints clearly in class discussions."
+        },
+        "phonics": {
+          "midterm": 94,
+          "daily": 96,
+          "overall": 95,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Her phonetic decoding skills and pronunciation are strong and precise. Excellent reading fluency and intonation!"
+        },
+        "writing": {
+          "midterm": 88,
+          "daily": 90,
+          "overall": 89,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "文筆細膩流暢，詞彙運用生動自然，能深刻表達真實情感與觀察。"
+        },
+        "singing": {
+          "midterm": 90,
+          "daily": 92,
+          "overall": 91,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "歌唱音準穩定，樂於開口練習，合唱時能與同學協調配合。"
+        },
+        "social": {
+          "midterm": 91,
+          "daily": 93,
+          "overall": 92,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "excellent", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "對在地歷史與地理文化探究具濃厚興趣，小組討論時能積極分享觀點。"
+        }
+      }
+    },
+    {
+      "id": "s02",
+      "seatNo": "02",
+      "chineseName": "陳彥宇",
+      "englishName": "Bob",
+      "classGrade": "Grade 4 / 401",
+      "studentId": "W114029",
+      "flags": {
+        "internationalStudent": false,
+        "independentConduct": false,
+        "ixlNote": false,
+        "mapPrintNote": false
+      },
+      "grades": {
+        "la": {
+          "midterm": 88,
+          "daily": 85,
+          "overall": 86,
+          "isManualOverall": false,
+          "conduct": { "performance": "good", "teamwork": "excellent", "assignment": "good", "behavior": "excellent" },
+          "comment": "Bob is a polite and enthusiastic student who demonstrates consistent effort in class discussions and reading tasks."
+        },
+        "math": {
+          "midterm": 92,
+          "daily": 94,
+          "overall": 93,
+          "isManualOverall": false,
+          "conduct": { "performance": "excellent", "teamwork": "good", "assignment": "excellent", "behavior": "excellent" },
+          "comment": "Bob has a sharp logical mind and solves mathematical problems with high confidence and precision."
+        },
+        "wss": {
+          "midterm": 85,
+          "daily": 88,
+          "overall": 87,
+          "isManualOverall": false,
+          "conduct": { "performance": "good", "teamwork": "good", "assignment": "good", "behavior": "good" },
+          "comment": "Bob shows genuine curiosity during social studies lessons and actively shares historical insights with classmates."
+        }
+      }
+    }
+  ]
+}

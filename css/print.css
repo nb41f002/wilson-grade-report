@@ -1,0 +1,136 @@
+/* A4 Landscape print — hide chrome, real paper size, no mid-row cuts */
+
+@page {
+  size: A4 landscape;
+  margin: 6mm 7mm;
+}
+
+@media print {
+  .no-print,
+  .top-navbar,
+  .editor-sidebar,
+  .stage-toolbar,
+  .modal-overlay,
+  .toast-bar,
+  .btn {
+    display: none !important;
+  }
+
+  html, body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .main-layout,
+  .preview-stage,
+  .preview-scroll {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  .report-viewport {
+    transform: none !important;
+    width: auto !important;
+    margin: 0 !important;
+  }
+
+  .report-sheet.a4-landscape {
+    width: 283mm !important;
+    height: 198mm !important;
+    max-height: 198mm !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 5mm 8mm 4mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+  }
+
+  .report-sheet.a4-landscape:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  .report-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    border: 1.4pt solid #000 !important;
+  }
+
+  .report-table th,
+  .report-table td {
+    border: 0.8pt solid #111 !important;
+  }
+
+  .report-table thead th {
+    background-color: #e8ecf0 !important;
+    color: #000 !important;
+  }
+
+  .report-table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .row-alt td {
+    background-color: #f5f7fa !important;
+  }
+
+  .th-weight {
+    background: #fefcbf !important;
+    color: #000 !important;
+  }
+
+  .assessment-content {
+    font-size: 8.5pt !important;
+    line-height: 1.32 !important;
+    color: #111 !important;
+  }
+
+  .smiley {
+    font-size: 13pt !important;
+    filter: none !important;
+  }
+
+  .crest-icon {
+    width: 40px !important;
+    height: 47px !important;
+  }
+
+  .school-name { font-size: 15pt !important; }
+  .term-title { font-size: 12pt !important; }
+  .student-name-val { font-size: 13pt !important; }
+
+  .flag-chip {
+    background: #ebf8ff !important;
+    border: 0.6pt solid #666 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .sig-line {
+    border-bottom: 0.8pt solid #000 !important;
+  }
+}

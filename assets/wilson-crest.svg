@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width="120" height="140">
+  <defs>
+    <linearGradient id="crestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2f4c"/>
+      <stop offset="100%" stop-color="#0c1827"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6be6a"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Shield -->
+  <path d="M 60 8 
+           C 95 8, 108 20, 108 52 
+           C 108 92, 78 120, 60 132 
+           C 42 120, 12 92, 12 52 
+           C 12 20, 25 8, 60 8 Z" 
+        fill="none" stroke="#1a2f4c" stroke-width="3.5" stroke-linejoin="round"/>
+
+  <!-- Inner Shield -->
+  <path d="M 60 15 
+           C 90 15, 101 25, 101 52 
+           C 101 87, 74 113, 60 123 
+           C 46 113, 19 87, 19 52 
+           C 19 25, 30 15, 60 15 Z" 
+        fill="#ffffff" stroke="#b8860b" stroke-width="1.8"/>
+
+  <!-- Shield Division Lines -->
+  <line x1="60" y1="20" x2="60" y2="78" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="2,2"/>
+  <line x1="25" y1="52" x2="95" y2="52" stroke="#b8860b" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+  <!-- Top-left Icon: Open Book (Learning) -->
+  <g transform="translate(33, 30) scale(0.65)" stroke="#1a2f4c" fill="none" stroke-width="2">
+    <path d="M 2 14 C 8 10, 16 10, 20 14 C 24 10, 32 10, 38 14 L 38 32 C 32 28, 24 28, 20 32 C 16 28, 8 28, 2 32 Z"/>
+    <line x1="20" y1="14" x2="20" y2="32"/>
+  </g>
+
+  <!-- Top-right Icon: Torch / Star (Excellence) -->
+  <g transform="translate(73, 28) scale(0.65)" fill="#b8860b">
+    <path d="M 16 2 L 18 10 L 26 12 L 20 17 L 22 25 L 16 20 L 10 25 L 12 17 L 6 12 L 14 10 Z"/>
+  </g>
+
+  <!-- Laurel Wreath -->
+  <path d="M 32 96 C 24 82, 24 64, 30 52" fill="none" stroke="#1a2f4c" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 88 96 C 96 82, 96 64, 90 52" fill="none" stroke="#1a2f4c" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Banner with School Monogram -->
+  <g transform="translate(0, 10)">
+    <rect x="24" y="68" width="72" height="18" rx="3" fill="#1a2f4c" stroke="#b8860b" stroke-width="1.2"/>
+    <text x="60" y="81" font-family="'Times New Roman', Georgia, serif" font-size="11.5" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="2.5">WILSON</text>
+  </g>
+
+  <text x="60" y="106" font-family="'Times New Roman', Georgia, serif" font-size="8" font-weight="600" fill="#1a2f4c" text-anchor="middle" letter-spacing="1">EST. 1889</text>
+</svg>
