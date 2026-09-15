@@ -1,7 +1,8 @@
-/* Wilson Grade Report v2 — International elementary UI (navy/white) */
+/* Wilson Grade Report v2 — themed via html[data-theme] (default = formal / MIA) */
 
-:root {
-  /* Modern International Academy — brand */
+:root,
+html[data-theme="formal"] {
+  /* formal — Modern International Academy (DEFAULT) */
   --navy: #17376D;
   --blue: #4E83D1;
   --blue-soft: #EAF2FC;
@@ -136,6 +137,42 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--primary);
 }
 .locale-btn:hover:not(.active) { color: #fff; }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.theme-toggle-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #bee3f8;
+  white-space: nowrap;
+}
+.theme-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255,255,255,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23bee3f8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") right 10px center / 10px no-repeat;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 28px 6px 12px;
+  min-height: 32px;
+  cursor: pointer;
+  max-width: 9.5rem;
+}
+.theme-select:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.theme-select option {
+  color: var(--ink);
+  background: var(--white);
+}
+
 
 .save-status-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -533,7 +570,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--ink);
   padding: 8mm 10mm 7mm;
   margin: 0 auto 14px;
-  box-shadow: 0 4px 24px rgba(23, 55, 109, .14);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .12);
   display: flex;
   flex-direction: column;
   font-family: var(--font);
@@ -906,7 +943,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   letter-spacing: 0.04em;
   line-height: 1;
   color: var(--navy);
-  background: #EEF5FD;
+  background: var(--ee-bg);
   border: none;
 }
 .habit-empty {
@@ -928,11 +965,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--navy);
-  background: #EEF5FD;
+  background: var(--ee-bg);
   border: none;
 }
 .conduct-ee, .conduct-me, .conduct-ae, .conduct-be {
-  background: #EEF5FD;
+  background: var(--ee-bg);
   color: var(--navy);
   border-color: transparent;
 }
@@ -1142,4 +1179,293 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .top-actions .btn { flex: 1 1 calc(50% - 6px); font-size: 0.82rem; padding: 8px 6px; }
   .form-grid-2 { grid-template-columns: 1fr; }
   .locale-toggle { order: 2; }
+}
+
+
+/* ========== Theme palettes (html[data-theme]) ========== */
+/* formal defaults live in :root / html[data-theme="formal"] above */
+/* Palettes from 01_設計規格/2026-09-16_ChatGPT_ExtraThemes.md (dated 2026-09-16) */
+
+html[data-theme="playful"] {
+  /* playful — School Blue / Sunny Apricot / Warm Ivory */
+  --navy: #315C8C;
+  --blue: #8CBFAE;
+  --blue-soft: #EAF4FB;
+  --blue-soft-2: #CFDDEA;
+  --gold: #F2B35D;
+  --gold-soft: #FFF3D8;
+  --paper: #FFFEFA;
+  --white: #FFFFFF;
+  --ink: #203047;
+  --ink-2: #43566E;
+  --text-muted: #728196;
+  --border: #CFDDEA;
+  --border-light: #E8EFF5;
+  --header-bg: #315C8C;
+  --subheader-bg: #EAF4FB;
+  --row-alt: #F7FAFD;
+  --overall-bg: #FFF3D8;
+  --page-radius: 0;
+  --box-radius: 7px;
+  --font:
+    "Nunito Sans",
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --navy-900: #315C8C;
+  --navy-800: #315C8C;
+  --navy-700: #315C8C;
+  --navy-500: #8CBFAE;
+  --ink-soft: var(--text-muted);
+  --rule: var(--border);
+  --rule-strong: var(--navy);
+  --paper-tint: var(--row-alt);
+  --gold-600: #F2B35D;
+  --gold-400: #F2B35D;
+  --gold-line: #F2B35D;
+  --ee-bg: #EAF4FB; --ee-fg: #315C8C; --ee-bd: #CFDDEA;
+  --me-bg: #EAF4FB; --me-fg: #315C8C; --me-bd: #CFDDEA;
+  --ae-bg: #EAF4FB; --ae-fg: #315C8C; --ae-bd: #CFDDEA;
+  --be-bg: #EAF4FB; --be-fg: #315C8C; --be-bd: #CFDDEA;
+  --font-en: "Nunito Sans";
+  --font-zh: "Noto Sans TC";
+  --font-ui: var(--font);
+  --primary: var(--navy);
+  --primary-mid: var(--blue);
+  --primary-soft: var(--blue-soft);
+  --bg: #eef4f9;
+  --panel: var(--white);
+  --text: var(--ink);
+  --muted: var(--text-muted);
+  --ee: #1e6b4a;
+  --me: #315C8C;
+  --ae: #9a5b12;
+  --be: #b5472a;
+  --serif: var(--font);
+}
+
+html[data-theme="fashion"] {
+  /* fashion — Midnight Ink / Electric Cobalt / Gallery White */
+  --navy: #172033;
+  --blue: #3559C7;
+  --blue-soft: #E9EEFF;
+  --blue-soft-2: #D7DAE0;
+  --gold: #3559C7;
+  --gold-soft: #E9EEFF;
+  --paper: #FEFEFD;
+  --white: #FFFFFF;
+  --ink: #171A21;
+  --ink-2: #343945;
+  --text-muted: #737987;
+  --border: #D7DAE0;
+  --border-light: #ECEEF1;
+  --header-bg: #172033;
+  --subheader-bg: #F0F2F5;
+  --row-alt: #FAFAFB;
+  --overall-bg: #E9EEFF;
+  --page-radius: 0;
+  --box-radius: 1px;
+  --font:
+    "DM Sans",
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --navy-900: #172033;
+  --navy-800: #172033;
+  --navy-700: #172033;
+  --navy-500: #3559C7;
+  --ink-soft: var(--text-muted);
+  --rule: var(--border);
+  --rule-strong: var(--navy);
+  --paper-tint: var(--row-alt);
+  --gold-600: #3559C7;
+  --gold-400: #3559C7;
+  --gold-line: #3559C7;
+  --ee-bg: #F0F2F5; --ee-fg: #172033; --ee-bd: #D7DAE0;
+  --me-bg: #F0F2F5; --me-fg: #172033; --me-bd: #D7DAE0;
+  --ae-bg: #F0F2F5; --ae-fg: #172033; --ae-bd: #D7DAE0;
+  --be-bg: #F0F2F5; --be-fg: #172033; --be-bd: #D7DAE0;
+  --font-en: "DM Sans";
+  --font-zh: "Noto Sans TC";
+  --font-display: "Libre Baskerville";
+  --font-ui: var(--font);
+  --primary: var(--navy);
+  --primary-mid: var(--blue);
+  --primary-soft: var(--blue-soft);
+  --bg: #eef0f4;
+  --panel: var(--white);
+  --text: var(--ink);
+  --muted: var(--text-muted);
+  --ee: #3d5a40;
+  --me: #172033;
+  --ae: #8a6a2a;
+  --be: #8a3b2e;
+  --serif: "Libre Baskerville", "Noto Serif TC", serif;
+}
+
+html[data-theme="fashion"] .report-title-en,
+html[data-theme="fashion"] .school-name {
+  font-family: var(--serif);
+}
+
+html[data-theme="pro"] {
+  /* pro — Slate Navy / Steel Blue / Clean White */
+  --navy: #31465A;
+  --blue: #6486A3;
+  --blue-soft: #EEF1F3;
+  --blue-soft-2: #E1E5E8;
+  --gold: #6486A3;
+  --gold-soft: #E8EFF4;
+  --paper: #FFFFFF;
+  --white: #FFFFFF;
+  --ink: #202A33;
+  --ink-2: #3D4852;
+  --text-muted: #697782;
+  --border: #C9D0D6;
+  --border-light: #E1E5E8;
+  --header-bg: #31465A;
+  --subheader-bg: #EEF1F3;
+  --row-alt: #F8F9FA;
+  --overall-bg: #E8EFF4;
+  --page-radius: 0;
+  --box-radius: 0;
+  --font:
+    "IBM Plex Sans",
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --navy-900: #31465A;
+  --navy-800: #31465A;
+  --navy-700: #31465A;
+  --navy-500: #6486A3;
+  --ink-soft: var(--text-muted);
+  --rule: var(--border);
+  --rule-strong: var(--navy);
+  --paper-tint: var(--row-alt);
+  --gold-600: #6486A3;
+  --gold-400: #6486A3;
+  --gold-line: #6486A3;
+  --ee-bg: #EEF1F3; --ee-fg: #31465A; --ee-bd: #C9D0D6;
+  --me-bg: #EEF1F3; --me-fg: #31465A; --me-bd: #C9D0D6;
+  --ae-bg: #EEF1F3; --ae-fg: #31465A; --ae-bd: #C9D0D6;
+  --be-bg: #EEF1F3; --be-fg: #31465A; --be-bd: #C9D0D6;
+  --font-en: "IBM Plex Sans";
+  --font-zh: "Noto Sans TC";
+  --font-ui: var(--font);
+  --primary: var(--navy);
+  --primary-mid: var(--blue);
+  --primary-soft: var(--blue-soft);
+  --bg: #e8eef3;
+  --panel: var(--white);
+  --text: var(--ink);
+  --muted: var(--text-muted);
+  --ee: #166534;
+  --me: #31465A;
+  --ae: #854d0e;
+  --be: #9a3412;
+  --serif: var(--font);
+}
+
+html[data-theme="classical"] {
+  /* classical — Oxford Navy / Antique Gold / Ivory Paper */
+  --navy: #26364A;
+  --blue: #8E8068;
+  --blue-soft: #EEE8DA;
+  --blue-soft-2: #DDD5C6;
+  --gold: #A98745;
+  --gold-soft: #F4EBD7;
+  --paper: #FBF8F0;
+  --white: #FFFEFA;
+  --ink: #2D2A26;
+  --ink-2: #514B43;
+  --text-muted: #7A7063;
+  --border: #B9AE98;
+  --border-light: #DDD5C6;
+  --header-bg: #26364A;
+  --subheader-bg: #EEE8DA;
+  --row-alt: #F8F4EA;
+  --overall-bg: #F4EBD7;
+  --page-radius: 0;
+  --box-radius: 0;
+  --ornament: #A98745;
+  --frame-outer: #8E8068;
+  --frame-inner: #C6B99E;
+  --font:
+    "Source Sans 3",
+    "Noto Sans TC",
+    "PingFang TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --navy-900: #26364A;
+  --navy-800: #26364A;
+  --navy-700: #26364A;
+  --navy-500: #A98745;
+  --ink-soft: var(--text-muted);
+  --rule: var(--border);
+  --rule-strong: var(--navy);
+  --paper-tint: var(--row-alt);
+  --gold-600: #A98745;
+  --gold-400: #A98745;
+  --gold-line: #A98745;
+  --ee-bg: #EEE8DA; --ee-fg: #26364A; --ee-bd: #B9AE98;
+  --me-bg: #EEE8DA; --me-fg: #26364A; --me-bd: #B9AE98;
+  --ae-bg: #EEE8DA; --ae-fg: #26364A; --ae-bd: #B9AE98;
+  --be-bg: #EEE8DA; --be-fg: #26364A; --be-bd: #B9AE98;
+  --font-display: "Cormorant Garamond";
+  --font-en: "Source Sans 3";
+  --font-zh: "Noto Serif TC";
+  --font-ui: var(--font);
+  --primary: var(--navy);
+  --primary-mid: #8E8068;
+  --primary-soft: var(--blue-soft);
+  --bg: #ebe3d4;
+  --panel: var(--white);
+  --text: var(--ink);
+  --muted: var(--text-muted);
+  --ee: #3d5a40;
+  --me: #26364A;
+  --ae: #8a6a1a;
+  --be: #8a3b1e;
+  --serif: "Cormorant Garamond", "Noto Serif TC", serif;
+}
+
+html[data-theme="classical"] .report-title-en,
+html[data-theme="classical"] .school-name {
+  font-family: var(--serif);
+}
+
+/* Classical: subtle double frame + corner flourishes (no heavy bg image) */
+html[data-theme="classical"] .report-sheet.a4-landscape {
+  box-shadow:
+    0 4px 24px rgba(38, 54, 74, 0.12),
+    inset 0 0 0 0.7pt var(--gold),
+    inset 0 0 0 2.2pt var(--navy);
+}
+html[data-theme="classical"] .report-sheet.a4-landscape::after {
+  content: "";
+  position: absolute;
+  inset: 3.5mm;
+  pointer-events: none;
+  z-index: 0;
+  border: 0.5pt solid color-mix(in srgb, var(--gold) 55%, transparent);
+  background:
+    linear-gradient(var(--navy), var(--navy)) top left / 10mm 1.2pt no-repeat,
+    linear-gradient(var(--navy), var(--navy)) top left / 1.2pt 10mm no-repeat,
+    linear-gradient(var(--gold), var(--gold)) top left / 6mm 0.6pt no-repeat,
+    linear-gradient(var(--gold), var(--gold)) top left / 0.6pt 6mm no-repeat,
+    linear-gradient(var(--navy), var(--navy)) top right / 10mm 1.2pt no-repeat,
+    linear-gradient(var(--navy), var(--navy)) top right / 1.2pt 10mm no-repeat,
+    linear-gradient(var(--gold), var(--gold)) top right / 6mm 0.6pt no-repeat,
+    linear-gradient(var(--gold), var(--gold)) top right / 0.6pt 6mm no-repeat,
+    linear-gradient(var(--navy), var(--navy)) bottom left / 10mm 1.2pt no-repeat,
+    linear-gradient(var(--navy), var(--navy)) bottom left / 1.2pt 10mm no-repeat,
+    linear-gradient(var(--gold), var(--gold)) bottom left / 6mm 0.6pt no-repeat,
+    linear-gradient(var(--gold), var(--gold)) bottom left / 0.6pt 6mm no-repeat,
+    linear-gradient(var(--navy), var(--navy)) bottom right / 10mm 1.2pt no-repeat,
+    linear-gradient(var(--navy), var(--navy)) bottom right / 1.2pt 10mm no-repeat,
+    linear-gradient(var(--gold), var(--gold)) bottom right / 6mm 0.6pt no-repeat,
+    linear-gradient(var(--gold), var(--gold)) bottom right / 0.6pt 6mm no-repeat;
 }

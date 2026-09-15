@@ -1,36 +1,4 @@
-/* Modern International Academy — A4 landscape print */
-
-:root {
-  --navy: #17376D;
-  --blue: #4E83D1;
-  --blue-soft: #EAF2FC;
-  --blue-soft-2: #D7E6F8;
-  --gold: #F2B84B;
-  --gold-soft: #FFF5D9;
-  --paper: #FCFBF7;
-  --white: #FFFFFF;
-  --ink: #17233C;
-  --ink-2: #334155;
-  --text-muted: #64748B;
-  --border: #CAD7E7;
-  --border-light: #E5ECF4;
-  --header-bg: #17376D;
-  --subheader-bg: #EAF2FC;
-  --row-alt: #F8FAFD;
-  --overall-bg: #FFF5D9;
-  --font:
-    "Inter",
-    "Noto Sans TC",
-    "PingFang TC",
-    "Microsoft JhengHei",
-    sans-serif;
-  --navy-900: #17376D;
-  --navy-800: #17376D;
-  --navy-700: #17376D;
-  --ink-soft: #64748B;
-  --rule: #CAD7E7;
-  --rule-strong: #17376D;
-}
+/* A4 landscape print — inherits html[data-theme] vars from app.css */
 
 @page {
   size: A4 landscape;
@@ -45,6 +13,8 @@
   .modal-overlay,
   .toast-bar,
   .locale-toggle,
+  .theme-toggle,
+  .theme-select,
   .btn {
     display: none !important;
   }
@@ -227,7 +197,7 @@
     letter-spacing: 0.04em !important;
     border-radius: 4px !important;
     color: var(--navy) !important;
-    background: #EEF5FD !important;
+    background: var(--ee-bg) !important;
     border: none !important;
   }
 
@@ -270,4 +240,15 @@
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
+
+  /* Classical theme: keep subtle frame; no screen drop-shadow */
+  html[data-theme="classical"] .report-sheet.a4-landscape {
+    box-shadow:
+      inset 0 0 0 0.7pt var(--gold),
+      inset 0 0 0 2.2pt var(--navy) !important;
+  }
+  html[data-theme="classical"] .report-sheet.a4-landscape::after {
+    opacity: 0.9 !important;
+  }
+
 }

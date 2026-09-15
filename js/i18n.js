@@ -179,7 +179,14 @@ window.I18n = {
       btnSaveEdit: '儲存',
       builtinTag: '內建',
       customTag: '自訂',
-      labelEnabled: '顯示'
+      labelEnabled: '顯示',
+      themeLabel: '主題',
+      themeAria: '報表主題',
+      themeFormal: '正式',
+      themePlayful: '童趣',
+      themeFashion: '時尚',
+      themePro: '專業',
+      themeClassical: '古典'
     },
     en: {
       brandTitle: 'Bilingual Grade Report (Landscape)',
@@ -352,7 +359,14 @@ window.I18n = {
       btnSaveEdit: 'Save',
       builtinTag: 'Built-in',
       customTag: 'Custom',
-      labelEnabled: 'Show'
+      labelEnabled: 'Show',
+      themeLabel: 'Theme',
+      themeAria: 'Report theme',
+      themeFormal: 'Formal',
+      themePlayful: 'Playful',
+      themeFashion: 'Fashion',
+      themePro: 'Professional',
+      themeClassical: 'Classical'
     }
   },
 

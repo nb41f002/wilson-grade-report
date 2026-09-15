@@ -85,3 +85,28 @@
 5. **Legend band** + signature lines (Teacher / Director / Principal, optional Homeroom); fonts Inter + Noto Sans TC (not Times New Roman).
 6. **Watermark**: dropped Quiet Ledger `report-bg.png` reliance; optional very light crest `::before` (~3% opacity).
 7. **Preserved**: custom subjects CRUD, zh/en i18n, EE|ME|AE|BE model, localStorage + JSON, Alice sample, 1–2 page split (≤8 / page), Netlify static.
+
+
+---
+
+## 2026-09-16 Theme switcher（printable）
+
+1. **Themes** via `html[data-theme]`: `formal` (MIA default) / `playful` / `fashion` / `pro` / `classical`.
+2. Persist key: `wilson_grade_theme_v2`. UI select next to locale toggle (正式／童趣／時尚／專業／古典).
+3. `print.css` inherits theme vars (no forced navy `:root`); theme switcher hidden on print like locale.
+4. Classical: subtle double frame + corner L flourishes (colors follow ExtraThemes Oxford/Antique Gold).
+
+---
+
+## 2026-09-16 ChatGPT ExtraThemes palettes applied
+
+Source: `01_設計規格/2026-09-16_ChatGPT_ExtraThemes.md`. Replaced placeholder blocks in `css/app.css`; `formal` MIA unchanged (`#17376D`).
+
+| Theme | Navy / primary | Accent → `--gold`/`--blue` | Paper | Fonts |
+| ----- | -------------- | -------------------------- | ----- | ----- |
+| playful | School Blue `#315C8C` | Sunny Apricot `#F2B35D` (+ Soft Mint `--blue`) | Warm Ivory `#FFFEFA` | Nunito Sans + Noto Sans TC; `--box-radius: 7px` |
+| fashion | Midnight Ink `#172033` | Electric Cobalt `#3559C7`; overall Cobalt Mist `#E9EEFF` | Gallery White `#FEFEFD` | DM Sans; titles Libre Baskerville |
+| pro | Slate Navy `#31465A` | Steel Blue `#6486A3` | Clean White `#FFFFFF` | IBM Plex Sans + Noto Sans TC |
+| classical | Oxford Navy `#26364A` | Antique Gold `#A98745` | Ivory `#FBF8F0` | Source Sans 3 body; Cormorant Garamond + Noto Serif TC titles |
+
+Google Fonts link updated (dropped Nunito alone / Outfit; added Nunito Sans, DM Sans, IBM Plex Sans, Cormorant Garamond). Screenshot synced to `02_參考圖/07_ChatGPT_ExtraThemes.png`.

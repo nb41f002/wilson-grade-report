@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const t = (key) => (window.I18n ? window.I18n.t(key) : key);
 
   window.I18n.load();
+  if (window.Theme) window.Theme.init();
   await window.DataStore.init();
 
   const $ = (id) => document.getElementById(id);
@@ -433,6 +434,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderSubjectsConfig();
     renderSubjectCards();
     renderPreview();
+    if (window.Theme) window.Theme.syncUI();
     if (saveStatusText && !saveStatusText.textContent.includes(':')) {
       saveStatusText.textContent = t('saveReady');
     }

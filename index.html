@@ -7,7 +7,19 @@
   <link rel="icon" type="image/svg+xml" href="assets/wilson-crest.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700;800&family=Libre+Baskerville:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    /* Early theme apply to avoid FOUC — key: wilson_grade_theme_v2 */
+    (function () {
+      try {
+        var t = localStorage.getItem('wilson_grade_theme_v2') || 'formal';
+        if (['formal','playful','fashion','pro','classical'].indexOf(t) < 0) t = 'formal';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'formal');
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/print.css" media="print">
 </head>
@@ -23,6 +35,16 @@
     <div class="locale-toggle" role="group" aria-label="Language">
       <button type="button" class="locale-btn active" data-locale="zh">繁中</button>
       <button type="button" class="locale-btn" data-locale="en">English</button>
+    </div>
+    <div class="theme-toggle no-print" role="group">
+      <label class="theme-toggle-label" for="theme-select" data-i18n="themeLabel">主題</label>
+      <select id="theme-select" class="theme-select" data-i18n-aria="themeAria" aria-label="主題">
+        <option value="formal" data-i18n="themeFormal">正式</option>
+        <option value="playful" data-i18n="themePlayful">童趣</option>
+        <option value="fashion" data-i18n="themeFashion">時尚</option>
+        <option value="pro" data-i18n="themePro">專業</option>
+        <option value="classical" data-i18n="themeClassical">古典</option>
+      </select>
     </div>
     <div class="save-status-badge" title="資料存在本機瀏覽器">
       <span class="status-dot" aria-hidden="true"></span>
@@ -226,6 +248,7 @@
   </div>
 
   <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/comments.js"></script>
   <script src="js/store.js"></script>
   <script src="js/report.js"></script>
