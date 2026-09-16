@@ -230,16 +230,25 @@ window.ReportPrimitives = {
   /** Classical corner flourish (inline SVG, rotated via CSS) */
   classicalCorners() {
     const svg = `
-      <svg class="classical-corner-svg" viewBox="0 0 80 80" width="18mm" height="18mm" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 34 V8 H32" stroke="#A98745" stroke-width="1.8" stroke-linecap="square"/>
-        <path d="M11 28 V13 H26" stroke="#8E8068" stroke-width="1.05" stroke-linecap="square" opacity="0.9"/>
-        <path d="M6 8 Q10 8 14 12 Q18 16 22 22" stroke="#A98745" stroke-width="1.15"/>
-        <path d="M8 8 Q16 8 20 16" stroke="#C6B99E" stroke-width="0.7"/>
-        <path d="M14 10 C18 8 22 10 24 14" stroke="#A98745" stroke-width="0.85" opacity="0.8"/>
-        <path d="M10 14 C8 18 10 22 14 24" stroke="#A98745" stroke-width="0.85" opacity="0.8"/>
-        <circle cx="6" cy="8" r="1.6" fill="#A98745"/>
-        <path d="M28 10 L30.2 12.2 L28 14.4 L25.8 12.2 Z" fill="#A98745"/>
-        <circle cx="16" cy="16" r="1.1" fill="#8E8068" opacity="0.75"/>
+      <svg class="classical-corner-svg" viewBox="0 0 80 80" width="16mm" height="16mm" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 38 V4 H38" stroke="currentColor" stroke-width="1.65" stroke-linecap="square"/>
+        <path d="M8.5 33 V8.5 H33" stroke="currentColor" stroke-width="0.95" stroke-linecap="square" opacity="0.85"/>
+        <circle cx="4" cy="4" r="2.2" stroke="currentColor" stroke-width="1.1"/>
+        <circle cx="4" cy="4" r="0.85" fill="currentColor"/>
+        <path d="M10 4 C16 4 20 7 22 12 C24 17 22 22 17 24 C13 26 9 24 8 20 C7 16 10 14 13 15 C15.5 16 16.5 18.5 15 20.5" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 8.5 C16.5 8.5 19.5 11 20.5 14.5 C21.5 18 19.5 21 16.5 21.5" stroke="currentColor" stroke-width="0.75" opacity="0.75" stroke-linecap="round"/>
+        <path d="M24 4.2 C28 2.2 34 3.5 37 7 C34.5 6.2 31 6.5 28.5 8.5 C31.5 8.2 35 9.5 36.5 12.5 C33 11 29.5 11.5 27 14" stroke="currentColor" stroke-width="0.95" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M26.5 4.8 C29 5.5 31.5 7.2 32.5 9.5" stroke="currentColor" stroke-width="0.65" opacity="0.7" stroke-linecap="round"/>
+        <path d="M4.2 24 C2.2 28 3.5 34 7 37 C6.2 34.5 6.5 31 8.5 28.5 C8.2 31.5 9.5 35 12.5 36.5 C11 33 11.5 29.5 14 27" stroke="currentColor" stroke-width="0.95" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4.8 26.5 C5.5 29 7.2 31.5 9.5 32.5" stroke="currentColor" stroke-width="0.65" opacity="0.7" stroke-linecap="round"/>
+        <path d="M14 14 Q22 14 26 22" stroke="currentColor" stroke-width="0.7" opacity="0.65" stroke-linecap="round"/>
+        <path d="M14 14 Q14 22 22 26" stroke="currentColor" stroke-width="0.7" opacity="0.65" stroke-linecap="round"/>
+        <path d="M17 17 Q22 17 24.5 21.5" stroke="currentColor" stroke-width="0.55" opacity="0.5" stroke-linecap="round"/>
+        <path d="M17 17 Q17 22 21.5 24.5" stroke="currentColor" stroke-width="0.55" opacity="0.5" stroke-linecap="round"/>
+        <path d="M36 4 L38.6 6.6 L36 9.2 L33.4 6.6 Z" stroke="currentColor" stroke-width="0.85" fill="none"/>
+        <path d="M4 36 L6.6 38.6 L9.2 36 L6.6 33.4 Z" stroke="currentColor" stroke-width="0.85" fill="none"/>
+        <path d="M29 11 L30.6 12.6 L29 14.2 L27.4 12.6 Z" fill="currentColor" opacity="0.85"/>
+        <path d="M11 29 L12.6 30.6 L14.2 29 L12.6 27.4 Z" fill="currentColor" opacity="0.85"/>
       </svg>`;
     return `
       <div class="ornate-corners" aria-hidden="true">
@@ -254,7 +263,12 @@ window.ReportPrimitives = {
     return `
       <div class="classical-divider" aria-hidden="true">
         <span class="classical-divider-line"></span>
-        <span class="classical-divider-diamond">◆</span>
+        <span class="classical-divider-diamond" aria-hidden="true">
+          <svg viewBox="0 0 14 14" width="3.2mm" height="3.2mm" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 1.2 L12.8 7 L7 12.8 L1.2 7 Z" stroke="currentColor" stroke-width="1.1"/>
+            <path d="M7 4 L10 7 L7 10 L4 7 Z" fill="currentColor" opacity="0.85"/>
+          </svg>
+        </span>
         <span class="classical-divider-line"></span>
       </div>`;
   }

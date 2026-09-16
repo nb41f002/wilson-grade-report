@@ -407,6 +407,25 @@ html[data-orientation="portrait"] {
   .pro-grid,
   .fashion-portrait-grid {
     height: 100% !important;
+    align-items: stretch !important;
+  }
+  .learning-main {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100% !important;
+    height: 100% !important;
+  }
+  .learning-main > .report-footer,
+  .playful-portrait > .report-footer {
+    margin-top: auto !important;
+  }
+  .ornate-corners .corner {
+    opacity: 0.82 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .classical-corner-svg {
+    color: var(--gold, #A98745) !important;
   }
   .identity-rail,
   .editorial-masthead,

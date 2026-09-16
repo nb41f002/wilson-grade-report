@@ -1791,15 +1791,21 @@ html[data-orientation="portrait"] {
 }
 .ornate-corners .corner {
   position: absolute;
-  width: 18mm;
-  height: 18mm;
+  width: 16mm;
+  height: 16mm;
   display: block;
+  opacity: 0.82;
 }
 .ornate-corners .corner-tl { top: 0; left: 0; }
 .ornate-corners .corner-tr { top: 0; right: 0; transform: scaleX(-1); }
 .ornate-corners .corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
 .ornate-corners .corner-br { bottom: 0; right: 0; transform: scale(-1); }
-.classical-corner-svg { width: 18mm; height: 18mm; display: block; color: var(--gold, #A98745); }
+.classical-corner-svg {
+  width: 16mm;
+  height: 16mm;
+  display: block;
+  color: var(--gold, #A98745);
+}
 
 .classical-crest-header,
 .classical-centered-crest {
@@ -1935,6 +1941,13 @@ html[data-orientation="portrait"] {
   color: var(--gold, #A98745);
   font-size: 7pt;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.classical-divider-diamond svg {
+  display: block;
+  color: inherit;
 }
 
 .classical-student-ledger {
@@ -2353,9 +2366,15 @@ html[data-theme="classical"] .report-sheet.ornate-frame::after {
   min-width: 0;
   width: auto;
   max-width: none;
-  min-height: 0;
+  min-height: 100%;
+  height: 100%;
   gap: 2mm;
   box-sizing: border-box;
+}
+/* Push signatures to bottom of main column (align with rail Page n/n) */
+.learning-main > .report-footer,
+.playful-portrait > .report-footer {
+  margin-top: auto;
 }
 .learning-main > *,
 .academic-panel,
@@ -3093,8 +3112,8 @@ html[data-theme="playful"] .habit-code {
 }
 .classical-landscape .ornate-corners .corner,
 .classical-landscape .classical-corner-svg {
-  width: 15mm;
-  height: 15mm;
+  width: 14mm;
+  height: 14mm;
 }
 
 
