@@ -171,7 +171,7 @@
             ${habitsPanel(enabled, student, schoolInfo)}
             ${assessmentGrid(enabled, student, schoolInfo)}
             ${p.renderLegend()}
-            ${p.renderFooter(schoolInfo, student)}
+            <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
           </main>
         </div>
       </article>`;
@@ -192,7 +192,7 @@
           <main class="learning-main">
             ${assessmentGrid(enabled, student, schoolInfo)}
             ${p.renderLegend()}
-            ${p.renderFooter(schoolInfo, student)}
+            <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
           </main>
         </div>
       </article>`;

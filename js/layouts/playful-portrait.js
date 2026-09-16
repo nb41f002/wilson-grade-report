@@ -149,7 +149,7 @@
         ${habitGrid(enabled, student, schoolInfo)}
         ${assessmentStack(enabled, student, schoolInfo)}
         ${p.renderLegend()}
-        ${p.renderFooter(schoolInfo, student)}
+        <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
       </article>`;
     }
     return `<article ${p.sheetAttrs(student, 1, liveTheme(), 'portrait', 'playful-portrait')}>
@@ -162,7 +162,7 @@
       ${continued(schoolInfo, student, 2, 2)}
       ${assessmentStack(enabled, student, schoolInfo)}
       ${p.renderLegend()}
-      ${p.renderFooter(schoolInfo, student)}
+      <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
     </article>`;
   };
 })();

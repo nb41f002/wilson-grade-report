@@ -409,18 +409,29 @@ html[data-orientation="portrait"] {
     height: 100% !important;
     align-items: stretch !important;
   }
+  .playful-grid {
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
   .learning-main {
     display: flex !important;
     flex-direction: column !important;
-    min-height: 100% !important;
-    height: 100% !important;
+    align-self: stretch !important;
+    min-height: 0 !important;
+    height: auto !important;
   }
+  .learning-main > .playful-footer,
   .learning-main > .report-footer,
+  .playful-portrait > .playful-footer,
   .playful-portrait > .report-footer {
     margin-top: auto !important;
+    flex-shrink: 0 !important;
+  }
+  .playful-footer {
+    width: 100% !important;
+    flex-shrink: 0 !important;
   }
   .ornate-corners .corner {
-    opacity: 0.82 !important;
+    opacity: 0.88 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
