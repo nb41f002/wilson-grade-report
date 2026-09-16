@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.I18n.load();
   if (window.Theme) window.Theme.init();
+  if (window.Orientation) window.Orientation.init();
   await window.DataStore.init();
 
   const $ = (id) => document.getElementById(id);
@@ -414,6 +415,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  function checkOverflow() {
+    const warn = $('overflow-warning');
+    if (!warn) return;
+    const sheets = reportViewport.querySelectorAll('.report-sheet');
+    let overflow = false;
+    const orient = (window.Orientation && window.Orientation.orientation) || 'landscape';
+    // A4 page height in CSS px (96dpi ≈ 3.78px/mm)
+    const pageH = (orient === 'portrait' ? 297 : 210) * (96 / 25.4);
+    sheets.forEach((sheet) => {
+      const tall = sheet.offsetHeight > pageH + 12;
+      if (tall) {
+        sheet.classList.add('compact-print');
+        // Re-measure after compact; still over → overflow
+        if (sheet.offsetHeight > pageH + 12) overflow = true;
+      } else {
+        sheet.classList.remove('compact-print');
+      }
+    });
+    if (previewMode === 'current' && sheets.length > 2) overflow = true;
+    if (overflow) {
+      warn.hidden = false;
+      warn.textContent = t('overflowWarn');
+    } else {
+      warn.hidden = true;
+    }
+  }
+
   function renderPreview() {
     const schoolInfo = window.DataStore.data.schoolInfo;
     const subjects = window.DataStore.data.availableSubjects;
@@ -426,6 +454,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!stu) return;
       reportViewport.innerHTML = window.ReportRenderer.renderStudentReport(stu, schoolInfo, subjects);
     }
+    const stage = document.querySelector('.preview-stage');
+    if (stage && window.Orientation) {
+      stage.setAttribute('data-orientation', window.Orientation.orientation);
+    }
+    requestAnimationFrame(() => checkOverflow());
+  }
+
+  if (window.Theme) {
+    window.Theme.onChange = () => renderPreview();
+  }
+  if (window.Orientation) {
+    window.Orientation.onChange = () => {
+      setZoom(currentZoom);
+      renderPreview();
+    };
   }
 
   window.App.onLocaleChange = () => {
@@ -435,6 +478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderSubjectCards();
     renderPreview();
     if (window.Theme) window.Theme.syncUI();
+    if (window.Orientation) window.Orientation.syncUI();
     if (saveStatusText && !saveStatusText.textContent.includes(':')) {
       saveStatusText.textContent = t('saveReady');
     }

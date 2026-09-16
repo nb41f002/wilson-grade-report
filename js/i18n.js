@@ -186,7 +186,11 @@ window.I18n = {
       themePlayful: '童趣',
       themeFashion: '時尚',
       themePro: '專業',
-      themeClassical: '古典'
+      themeClassical: '古典',
+      orientLabel: '方向',
+      orientLandscape: '橫式',
+      orientPortrait: '直式',
+      overflowWarn: '內容超過兩頁，請縮短評語或減少列印科目。'
     },
     en: {
       brandTitle: 'Bilingual Grade Report (Landscape)',
@@ -366,7 +370,11 @@ window.I18n = {
       themePlayful: 'Playful',
       themeFashion: 'Fashion',
       themePro: 'Professional',
-      themeClassical: 'Classical'
+      themeClassical: 'Classical',
+      orientLabel: 'Orientation',
+      orientLandscape: 'Landscape',
+      orientPortrait: 'Portrait',
+      overflowWarn: 'Content exceeds two pages. Shorten comments or reduce printed subjects.'
     }
   },
 

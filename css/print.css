@@ -1,8 +1,23 @@
-/* A4 landscape print — inherits html[data-theme] vars from app.css */
+/* A4 print — landscape / portrait via named pages + data-orientation */
 
+@page report-landscape {
+  size: A4 landscape;
+  margin: 8mm 10mm;
+}
+
+@page report-portrait {
+  size: A4 portrait;
+  margin: 10mm 11mm;
+}
+
+/* Default for browsers that ignore named pages */
 @page {
   size: A4 landscape;
   margin: 8mm 10mm;
+}
+
+html[data-orientation="portrait"] {
+  /* hint for UAs that support size on root */
 }
 
 @media print {
@@ -15,6 +30,8 @@
   .locale-toggle,
   .theme-toggle,
   .theme-select,
+  .orient-toggle,
+  .overflow-warning,
   .btn {
     display: none !important;
   }
@@ -35,6 +52,7 @@
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    box-sizing: border-box;
   }
 
   .main-layout,
@@ -57,7 +75,13 @@
     margin: 0 !important;
   }
 
+  .report {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   .report-sheet.a4-landscape {
+    page: report-landscape;
     width: 277mm !important;
     height: 194mm !important;
     max-height: 194mm !important;
@@ -80,11 +104,54 @@
     font-family: var(--font) !important;
   }
 
+  .report-sheet.a4-portrait {
+    page: report-portrait;
+    width: 188mm !important;
+    height: 277mm !important;
+    max-height: 277mm !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    break-after: page !important;
+    break-inside: avoid !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    background-color: var(--paper) !important;
+    font-family: var(--font) !important;
+  }
+
+  /* Classical ornate: keep inset frame via padding on safe area */
+  .report-sheet.ornate-frame.a4-landscape {
+    padding: 0 !important;
+    box-shadow:
+      inset 0 0 0 0.7pt var(--gold),
+      inset 0 0 0 2.2pt var(--navy) !important;
+  }
+  .report-sheet.ornate-frame.a4-portrait {
+    padding: 0 !important;
+    box-shadow:
+      inset 0 0 0 0.7pt var(--gold),
+      inset 0 0 0 2.2pt var(--navy) !important;
+  }
+  .report-sheet.ornate-frame .classical-safe {
+    margin: 3mm !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+
   .report-sheet.a4-landscape::before {
     opacity: 0.028 !important;
   }
 
-  .report-sheet.a4-landscape:last-child {
+  .report-sheet.a4-landscape:last-child,
+  .report-sheet.a4-portrait:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
   }
@@ -107,6 +174,12 @@
     font-size: 18pt !important;
     color: var(--navy) !important;
   }
+  .formal-portrait .fp-title {
+    font-size: 14pt !important;
+  }
+  .classical-title {
+    font-size: 13pt !important;
+  }
   .report-title-zh {
     font-size: 9pt !important;
     color: var(--text-muted) !important;
@@ -116,12 +189,18 @@
     height: 18mm !important;
   }
 
-  .student-meta {
+  .student-meta,
+  .student-meta-grid {
     background: var(--blue-soft) !important;
     border-left: 2mm solid var(--blue) !important;
   }
+  .classical-student-ledger {
+    background: transparent !important;
+    border-left: none !important;
+  }
 
-  .report-table {
+  .report-table,
+  .portrait-table {
     border-collapse: collapse !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -131,7 +210,9 @@
   }
 
   .report-table th,
-  .report-table td {
+  .report-table td,
+  .portrait-table th,
+  .portrait-table td {
     border-right: 1px solid var(--border-light) !important;
     border-bottom: 1px solid var(--border-light) !important;
   }
@@ -140,13 +221,20 @@
     background: var(--navy) !important;
     color: #fff !important;
   }
-  .report-table thead .sub-head th {
+  .report-table thead .sub-head th,
+  .portrait-table thead .sub-head th {
     background: var(--blue-soft) !important;
     color: var(--navy) !important;
   }
+  .classical-table thead .classical-sub-head th,
+  .classical-table thead .sub-head th {
+    background: color-mix(in srgb, var(--gold-soft, #F5E6C8) 80%, var(--paper)) !important;
+  }
 
   .report-table tr,
-  .subject-row {
+  .subject-row,
+  .subject-block,
+  .assessment-block {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
@@ -158,7 +246,8 @@
   .col-overall,
   .overall,
   .report-table thead .sub-head th.col-overall,
-  .report-table thead .sub-head th.th-overall {
+  .report-table thead .sub-head th.th-overall,
+  .portrait-table th.col-overall {
     background: var(--overall-bg) !important;
     color: var(--navy) !important;
     font-weight: 800 !important;
@@ -178,7 +267,8 @@
     font-size: 9.5pt !important;
   }
   .assessment-content,
-  .teacher-assessment {
+  .teacher-assessment,
+  .assessment-text {
     font-size: 7.5pt !important;
     line-height: 1.35 !important;
     color: var(--ink-2) !important;
@@ -209,6 +299,11 @@
     margin-top: 2.5mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+  .classical-legend .habit-legend {
+    background: transparent !important;
+    border-left: none !important;
+    border-top: 0.5pt solid var(--gold) !important;
   }
 
   .signature-grid {
@@ -241,14 +336,54 @@
     break-inside: avoid !important;
   }
 
-  /* Classical theme: keep subtle frame; no screen drop-shadow */
-  html[data-theme="classical"] .report-sheet.a4-landscape {
-    box-shadow:
-      inset 0 0 0 0.7pt var(--gold),
-      inset 0 0 0 2.2pt var(--navy) !important;
-  }
-  html[data-theme="classical"] .report-sheet.a4-landscape::after {
-    opacity: 0.9 !important;
+  thead {
+    display: table-header-group;
   }
 
+  .compact-print {
+    font-size: 6.8pt !important;
+  }
+  .compact-print .assessment-text,
+  .compact-print .teacher-assessment,
+  .compact-print .assessment-content {
+    line-height: 1.18 !important;
+  }
+
+  /* Modular layout print tweaks */
+  .playful-grid,
+  .fashion-grid,
+  .pro-grid,
+  .fashion-portrait-grid {
+    height: 100% !important;
+  }
+  .identity-rail,
+  .editorial-masthead,
+  .pro-profile-rail {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .pro-profile-rail {
+    background: #F3F5F6 !important;
+  }
+  .student-card {
+    background: var(--blue-soft) !important;
+  }
+  .ed-outline-num {
+    -webkit-text-stroke: 0.7pt color-mix(in srgb, var(--navy) 28%, transparent) !important;
+  }
+  .ed-ruled-head {
+    border-bottom: 0.8pt solid var(--navy) !important;
+  }
+  .pro-meta-table th {
+    background: #F3F5F6 !important;
+  }
+  .pro-table thead .sub-head th {
+    background: #EEF1F3 !important;
+  }
+  .rail-deco-tl,
+  .rail-deco-bl,
+  .playful-hero-deco {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }

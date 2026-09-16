@@ -9,14 +9,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700;800&family=Libre+Baskerville:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
   <script>
-    /* Early theme apply to avoid FOUC — key: wilson_grade_theme_v2 */
+    /* Early theme + orientation apply to avoid FOUC */
     (function () {
       try {
         var t = localStorage.getItem('wilson_grade_theme_v2') || 'formal';
         if (['formal','playful','fashion','pro','classical'].indexOf(t) < 0) t = 'formal';
         document.documentElement.setAttribute('data-theme', t);
+        var o = localStorage.getItem('wilson_grade_orientation_v2') || 'landscape';
+        if (['landscape','portrait'].indexOf(o) < 0) o = 'landscape';
+        document.documentElement.setAttribute('data-orientation', o);
+        if (o === 'portrait') {
+          document.documentElement.style.setProperty('--a4-w', '210mm');
+          document.documentElement.style.setProperty('--a4-h', '297mm');
+        }
       } catch (e) {
         document.documentElement.setAttribute('data-theme', 'formal');
+        document.documentElement.setAttribute('data-orientation', 'landscape');
       }
     })();
   </script>
@@ -35,6 +43,11 @@
     <div class="locale-toggle" role="group" aria-label="Language">
       <button type="button" class="locale-btn active" data-locale="zh">繁中</button>
       <button type="button" class="locale-btn" data-locale="en">English</button>
+    </div>
+    <div class="orient-toggle no-print" role="group" aria-label="Orientation">
+      <span class="theme-toggle-label" data-i18n="orientLabel">方向</span>
+      <button type="button" class="orient-btn active" data-orientation="landscape" data-i18n="orientLandscape" aria-pressed="true">橫式</button>
+      <button type="button" class="orient-btn" data-orientation="portrait" data-i18n="orientPortrait" aria-pressed="false">直式</button>
     </div>
     <div class="theme-toggle no-print" role="group">
       <label class="theme-toggle-label" for="theme-select" data-i18n="themeLabel">主題</label>
@@ -171,7 +184,7 @@
       </div>
     </aside>
 
-    <section class="preview-stage">
+    <section class="preview-stage" data-preview-orient data-orientation="landscape">
       <div class="stage-toolbar no-print">
         <span class="zoom-label" data-i18n="zoomLabel">A4 橫式預覽（297×210 mm）</span>
         <div class="zoom-controls">
@@ -182,6 +195,7 @@
         </div>
       </div>
       <div class="preview-scroll">
+        <div id="overflow-warning" class="overflow-warning no-print" hidden data-i18n="overflowWarn">內容超過兩頁，請縮短評語或減少列印科目。</div>
         <div id="report-viewport" class="report-viewport" style="--preview-scale: 0.72"></div>
       </div>
     </section>
@@ -251,6 +265,17 @@
   <script src="js/theme.js"></script>
   <script src="js/comments.js"></script>
   <script src="js/store.js"></script>
+  <script src="js/layouts/primitives.js"></script>
+  <script src="js/layouts/formal-landscape.js"></script>
+  <script src="js/layouts/formal-portrait.js"></script>
+  <script src="js/layouts/classical-landscape.js"></script>
+  <script src="js/layouts/classical-portrait.js"></script>
+  <script src="js/layouts/playful-landscape.js"></script>
+  <script src="js/layouts/playful-portrait.js"></script>
+  <script src="js/layouts/fashion-landscape.js"></script>
+  <script src="js/layouts/fashion-portrait.js"></script>
+  <script src="js/layouts/pro-landscape.js"></script>
+  <script src="js/layouts/pro-portrait.js"></script>
   <script src="js/report.js"></script>
   <script src="js/app.js"></script>
 </body>
