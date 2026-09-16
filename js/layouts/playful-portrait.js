@@ -14,12 +14,14 @@
     return `
       <header class="playful-hero">
         <div class="playful-hero-top">
-          <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest">
+          <div class="playful-crest-badge">
+            <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest">
+          </div>
           <div class="playful-hero-brand">
             <div class="school-name">${p.escapeHtml(school.en)}</div>
             <div class="school-name-zh">${p.escapeHtml(school.zh)}</div>
           </div>
-          <div class="playful-hero-term">
+          <div class="playful-hero-term rail-term-card">
             <strong>${p.escapeHtml(term)}</strong>
             <span>${year || '—'}</span>
             <span class="mia-page">Page ${pageNum}/${totalPages}</span>
@@ -64,7 +66,7 @@
     }).join('');
     return `
       <section class="score-table">
-        <h2 class="panel-title">${p.thLabel('thAcademic', 'thAcademicZh')}</h2>
+        <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thAcademic', 'thAcademicZh')}</span><span class="playful-accent-rule" aria-hidden="true"></span></h2>
         <table class="portrait-table playful-table">
           <colgroup><col style="width:44%"><col style="width:18%"><col style="width:18%"><col style="width:20%"></colgroup>
           <thead><tr class="sub-head">
@@ -91,7 +93,7 @@
     }).join('');
     return `
       <section class="habit-grid">
-        <h2 class="panel-title">${p.thLabel('thHabits', 'thHabitsZh')}</h2>
+        <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thHabits', 'thHabitsZh')}</span><span class="playful-accent-rule" aria-hidden="true"></span></h2>
         <table class="portrait-table playful-table">
           <colgroup><col style="width:44%"><col style="width:14%"><col style="width:14%"><col style="width:14%"><col style="width:14%"></colgroup>
           <thead><tr class="sub-head">
@@ -111,14 +113,14 @@
     const blocks = subjects.map((subj) => {
       const row = p.gradeRow(subj, student, schoolInfo);
       if (!row.comment) return '';
-      return `<div class="assessment-block subject-block assessment-stack-item">
+      return `<div class="assessment-block subject-block assessment-stack-item playful-assess-card">
         <h3 class="assessment-subject"><span class="accent-bar" aria-hidden="true"></span>${p.escapeHtml(p.subjectLabel(subj))}</h3>
         <p class="assessment-text teacher-assessment">${p.escapeHtml(row.comment)}</p>
       </div>`;
     }).filter(Boolean).join('');
     if (!blocks) return '';
     return `<section class="assessment-stack">
-      <h2 class="panel-title">${p.thLabel('thAssessment', 'thAssessmentZh')}</h2>${blocks}</section>`;
+      <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thAssessment', 'thAssessmentZh')}</span><span class="playful-accent-rule" aria-hidden="true"></span></h2>${blocks}</section>`;
   }
 
   function continued(schoolInfo, student, pageNum, totalPages) {

@@ -14,15 +14,9 @@
     const year = p.escapeHtml(schoolInfo.academicYear || '');
     const titleEn = p.escapeHtml(p.reportTitleEn(term));
     const roman = totalPages === 1 ? 'I' : (pageNum === 1 ? 'I' : 'II');
+    const romanTotal = totalPages === 1 ? 'I' : 'II';
     return `
       <header class="classical-centered-crest">
-        <div class="classical-term-folio classical-term-folio-portrait">
-          <span class="term-label">${p.escapeHtml(p.t('metaAcademicYear'))}</span>
-          <strong>${year || '—'}</strong>
-          <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
-          <strong>${p.escapeHtml(term)}</strong>
-          <span class="classical-page-roman">${roman} / ${totalPages === 1 ? 'I' : 'II'}</span>
-        </div>
         <div class="classical-crest-center">
           <div class="classical-crest-wrap">
             <img src="assets/wilson-crest.svg" alt="" class="crest-icon classical-crest">
@@ -31,6 +25,22 @@
           <div class="school-name-zh classical-school-zh">${p.escapeHtml(school.zh)}</div>
           ${p.classicalDivider()}
           <h1 class="report-title-en classical-title">${titleEn}</h1>
+        </div>
+        <div class="classical-meta-strip" role="group" aria-label="Report meta">
+          <div class="classical-meta-cell">
+            <span class="term-label">${p.escapeHtml(p.t('metaAcademicYear'))}</span>
+            <strong>${year || '—'}</strong>
+          </div>
+          <div class="classical-meta-sep" aria-hidden="true">◆</div>
+          <div class="classical-meta-cell">
+            <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
+            <strong>${p.escapeHtml(term)}</strong>
+          </div>
+          <div class="classical-meta-sep" aria-hidden="true">◆</div>
+          <div class="classical-meta-cell classical-meta-page">
+            <span class="term-label">Page</span>
+            <strong class="classical-page-roman">${roman} / ${romanTotal}</strong>
+          </div>
         </div>
       </header>`;
   }

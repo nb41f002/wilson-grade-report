@@ -140,20 +140,59 @@ html[data-orientation="portrait"] {
   /* Classical ornate: keep inset frame via padding on safe area */
   .report-sheet.ornate-frame.a4-landscape {
     padding: 0 !important;
+    background: var(--paper, #FBF8F0) !important;
     box-shadow:
-      inset 0 0 0 0.7pt var(--gold),
-      inset 0 0 0 2.2pt var(--navy) !important;
+      inset 0 0 0 1.1pt var(--gold),
+      inset 0 0 0 2.8pt var(--frame-outer, #8E8068),
+      inset 0 0 0 3.6pt color-mix(in srgb, var(--gold) 55%, transparent) !important;
   }
   .report-sheet.ornate-frame.a4-portrait {
     padding: 0 !important;
+    background: var(--paper, #FBF8F0) !important;
     box-shadow:
-      inset 0 0 0 0.7pt var(--gold),
-      inset 0 0 0 2.2pt var(--navy) !important;
+      inset 0 0 0 1.1pt var(--gold),
+      inset 0 0 0 2.8pt var(--frame-outer, #8E8068),
+      inset 0 0 0 3.6pt color-mix(in srgb, var(--gold) 55%, transparent) !important;
   }
   .report-sheet.ornate-frame .classical-safe {
     margin: 3mm !important;
     flex: 1 !important;
     min-height: 0 !important;
+    border: 0.9pt solid color-mix(in srgb, var(--gold) 70%, var(--frame-inner, #C6B99E)) !important;
+    outline: 0.45pt solid color-mix(in srgb, var(--frame-outer, #8E8068) 40%, transparent) !important;
+    outline-offset: 1.4mm !important;
+  }
+  .classical-meta-strip {
+    background: color-mix(in srgb, var(--gold-soft, #F4EBD7) 55%, transparent) !important;
+    border-top-color: color-mix(in srgb, var(--gold) 75%, transparent) !important;
+    border-bottom-color: color-mix(in srgb, var(--gold) 75%, transparent) !important;
+  }
+  .classical-signatures .signature-line,
+  .classical-signatures .sig-line {
+    border-bottom-color: color-mix(in srgb, var(--navy) 55%, var(--gold)) !important;
+  }
+  .identity-rail {
+    background: color-mix(in srgb, var(--blue-soft) 85%, #fff) !important;
+    box-shadow: inset 0 0 0 0.7pt var(--border) !important;
+  }
+  .playful-crest-badge {
+    background: #fff !important;
+    box-shadow: inset 0 0 0 0.7pt var(--border) !important;
+  }
+  .playful-assess-card,
+  .assessment-stack-item.playful-assess-card {
+    background: #fff !important;
+    border: 0.7pt solid var(--border) !important;
+    box-shadow: inset 2.2pt 0 0 var(--gold) !important;
+  }
+  .rail-student-card,
+  .rail-term-card,
+  .student-strip,
+  .student-card {
+    background: color-mix(in srgb, var(--blue-soft) 50%, #fff) !important;
+  }
+  .rail-term-card {
+    background: color-mix(in srgb, var(--gold-soft) 45%, #fff) !important;
   }
 
   .report-sheet.a4-landscape::before {
@@ -188,7 +227,10 @@ html[data-orientation="portrait"] {
     font-size: 14pt !important;
   }
   .classical-title {
-    font-size: 13pt !important;
+    font-size: 12.5pt !important;
+  }
+  .classical-landscape .classical-title {
+    font-size: 11.5pt !important;
   }
   .report-title-zh {
     font-size: 9pt !important;
@@ -395,5 +437,53 @@ html[data-orientation="portrait"] {
   .playful-hero-deco {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+}
+
+@media print {
+  .classical-portrait .portrait-table th,
+  .classical-portrait .portrait-table td,
+  .playful-portrait .portrait-table th,
+  .playful-portrait .portrait-table td {
+    padding: 0.8mm 1.2mm !important;
+  }
+  .classical-portrait .portrait-table .subject,
+  .playful-portrait .portrait-table .subject {
+    font-size: 7.3pt !important;
+  }
+  .classical-portrait .portrait-table .score,
+  .playful-portrait .portrait-table .score {
+    font-size: 8.2pt !important;
+  }
+}
+
+@media print {
+  .classical-landscape .classical-crest {
+    width: 13mm !important;
+    height: 13mm !important;
+  }
+  .classical-portrait .classical-crest {
+    width: 16mm !important;
+    height: 16mm !important;
+  }
+  .playful-landscape .playful-crest {
+    width: 11mm !important;
+    height: 11mm !important;
+  }
+  .playful-portrait .playful-crest {
+    width: 13mm !important;
+    height: 13mm !important;
+  }
+  .playful-landscape .playful-crest-sm,
+  .playful-portrait .playful-crest-sm {
+    width: 8mm !important;
+    height: 8mm !important;
+  }
+  html[data-theme="playful"] .playful-table,
+  html[data-theme="playful"] .portrait-table.playful-table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
   }
 }

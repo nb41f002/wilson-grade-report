@@ -16,36 +16,48 @@
     if (compact) {
       return `
         <aside class="identity-rail identity-rail-compact">
-          <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest-sm">
+          <div class="rail-pattern" aria-hidden="true"></div>
+          <div class="playful-crest-badge playful-crest-badge-sm">
+            <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest-sm">
+          </div>
           <div class="rail-continued">${p.escapeHtml(p.t('continued'))}</div>
-          <div class="rail-student-sm">${p.escapeHtml(names.en)}</div>
-          <div class="rail-grade-sm">${p.escapeHtml(student.classGrade || '')}</div>
-          <div class="mia-page">Page ${pageNum}/${totalPages}</div>
+          <div class="rail-student-card rail-student-card-sm">
+            <div class="rail-student-sm">${p.escapeHtml(names.en)}</div>
+            <div class="rail-grade-sm">${p.escapeHtml(student.classGrade || '')}</div>
+          </div>
+          <div class="mia-page rail-page">Page ${pageNum}/${totalPages}</div>
         </aside>`;
     }
     return `
       <aside class="identity-rail">
-        <div class="rail-deco-tl" aria-hidden="true"></div>
-        <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest">
-        <div class="rail-school">${p.escapeHtml(school.en)}</div>
-        <div class="rail-school-zh">${p.escapeHtml(school.zh)}</div>
+        <div class="rail-pattern" aria-hidden="true"></div>
+        <div class="playful-crest-badge">
+          <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest">
+        </div>
+        <div class="rail-brand">
+          <div class="rail-school">${p.escapeHtml(school.en)}</div>
+          <div class="rail-school-zh">${p.escapeHtml(school.zh)}</div>
+        </div>
         <div class="rail-title-stack">
           <span>MIDTERM</span>
           <span>LEARNING</span>
           <span>REPORT</span>
         </div>
-        <div class="rail-student-block">
+        <div class="rail-student-card">
           <strong>${p.escapeHtml(names.primary)}</strong>
           <span>${p.escapeHtml(student.classGrade || '—')}</span>
-          <span>${p.escapeHtml(student.studentId || '—')}</span>
+          <span class="rail-id">${p.escapeHtml(student.studentId || '—')}</span>
         </div>
-        <div class="rail-term-block">
-          <span class="term-label">${p.escapeHtml(p.t('metaAcademicYear'))}</span>
-          <strong>${year || '—'}</strong>
-          <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
-          <strong>${p.escapeHtml(term)}</strong>
+        <div class="rail-term-card">
+          <div class="rail-term-row">
+            <span class="term-label">${p.escapeHtml(p.t('metaAcademicYear'))}</span>
+            <strong>${year || '—'}</strong>
+          </div>
+          <div class="rail-term-row">
+            <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
+            <strong>${p.escapeHtml(term)}</strong>
+          </div>
         </div>
-        <div class="rail-deco-bl" aria-hidden="true"></div>
         <div class="mia-page rail-page">Page ${pageNum} / ${totalPages}</div>
       </aside>`;
   }
@@ -80,8 +92,8 @@
     }).join('');
     return `
       <section class="academic-panel">
-        <h2 class="panel-title">${p.thLabel('thAcademic', 'thAcademicZh')}
-          <span class="playful-wave" aria-hidden="true"></span></h2>
+        <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thAcademic', 'thAcademicZh')}</span>
+          <span class="playful-accent-rule" aria-hidden="true"></span></h2>
         <table class="portrait-table playful-table">
           <colgroup><col style="width:46%"><col style="width:17%"><col style="width:17%"><col style="width:20%"></colgroup>
           <thead><tr class="sub-head">
@@ -108,8 +120,8 @@
     }).join('');
     return `
       <section class="habits-panel">
-        <h2 class="panel-title">${p.thLabel('thHabits', 'thHabitsZh')}
-          <span class="playful-wave" aria-hidden="true"></span></h2>
+        <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thHabits', 'thHabitsZh')}</span>
+          <span class="playful-accent-rule" aria-hidden="true"></span></h2>
         <table class="portrait-table playful-table">
           <colgroup><col style="width:46%"><col style="width:13.5%"><col style="width:13.5%"><col style="width:13.5%"><col style="width:13.5%"></colgroup>
           <thead><tr class="sub-head">
@@ -137,7 +149,8 @@
     if (!blocks) return '';
     return `
       <section class="assessment-grid">
-        <h2 class="panel-title">${p.thLabel('thAssessment', 'thAssessmentZh')}</h2>
+        <h2 class="panel-title"><span class="panel-title-text">${p.thLabel('thAssessment', 'thAssessmentZh')}</span>
+          <span class="playful-accent-rule" aria-hidden="true"></span></h2>
         <div class="assessment-grid-cols">${blocks}</div>
       </section>`;
   }

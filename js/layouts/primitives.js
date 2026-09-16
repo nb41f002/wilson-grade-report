@@ -230,11 +230,16 @@ window.ReportPrimitives = {
   /** Classical corner flourish (inline SVG, rotated via CSS) */
   classicalCorners() {
     const svg = `
-      <svg class="classical-corner-svg" viewBox="0 0 64 64" width="16mm" height="16mm" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 28 V8 H24" stroke="#A98745" stroke-width="1.2"/>
-        <path d="M8 22 V12 H18" stroke="#A98745" stroke-width="0.8"/>
-        <path d="M4 8 Q14 8 18 18" stroke="#A98745" stroke-width="0.9"/>
-        <circle cx="10" cy="10" r="1.4" fill="#A98745"/>
+      <svg class="classical-corner-svg" viewBox="0 0 80 80" width="18mm" height="18mm" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 34 V8 H32" stroke="#A98745" stroke-width="1.8" stroke-linecap="square"/>
+        <path d="M11 28 V13 H26" stroke="#8E8068" stroke-width="1.05" stroke-linecap="square" opacity="0.9"/>
+        <path d="M6 8 Q10 8 14 12 Q18 16 22 22" stroke="#A98745" stroke-width="1.15"/>
+        <path d="M8 8 Q16 8 20 16" stroke="#C6B99E" stroke-width="0.7"/>
+        <path d="M14 10 C18 8 22 10 24 14" stroke="#A98745" stroke-width="0.85" opacity="0.8"/>
+        <path d="M10 14 C8 18 10 22 14 24" stroke="#A98745" stroke-width="0.85" opacity="0.8"/>
+        <circle cx="6" cy="8" r="1.6" fill="#A98745"/>
+        <path d="M28 10 L30.2 12.2 L28 14.4 L25.8 12.2 Z" fill="#A98745"/>
+        <circle cx="16" cy="16" r="1.1" fill="#8E8068" opacity="0.75"/>
       </svg>`;
     return `
       <div class="ornate-corners" aria-hidden="true">
@@ -249,7 +254,7 @@ window.ReportPrimitives = {
     return `
       <div class="classical-divider" aria-hidden="true">
         <span class="classical-divider-line"></span>
-        <span class="classical-divider-diamond">◇</span>
+        <span class="classical-divider-diamond">◆</span>
         <span class="classical-divider-line"></span>
       </div>`;
   }
