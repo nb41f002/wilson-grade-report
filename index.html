@@ -186,7 +186,10 @@
 
     <section class="preview-stage" data-preview-orient data-orientation="landscape">
       <div class="stage-toolbar no-print">
-        <span class="zoom-label" data-i18n="zoomLabel">A4 橫式預覽（297×210 mm）</span>
+        <div class="zoom-label-block">
+          <span class="zoom-label" data-i18n="zoomLabel">A4 橫式預覽（297×210 mm）</span>
+          <span class="zoom-mobile-hint" data-i18n="zoomMobileHint">手機請左右滑動預覽；換『直式』或『古典／時尚』可看新版面</span>
+        </div>
         <div class="zoom-controls">
           <button type="button" class="zoom-btn" id="btn-zoom-out" aria-label="縮小">−</button>
           <span id="zoom-val">72%</span>
@@ -196,7 +199,9 @@
       </div>
       <div class="preview-scroll">
         <div id="overflow-warning" class="overflow-warning no-print" hidden data-i18n="overflowWarn">內容超過兩頁，請縮短評語或減少列印科目。</div>
-        <div id="report-viewport" class="report-viewport" style="--preview-scale: 0.72"></div>
+        <div id="preview-scale-wrap" class="preview-scale-wrap">
+          <div id="report-viewport" class="report-viewport" style="--preview-scale: 0.72"></div>
+        </div>
       </div>
     </section>
   </main>

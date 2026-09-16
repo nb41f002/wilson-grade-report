@@ -44,10 +44,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     el._t = setTimeout(() => el.classList.remove('show'), ms);
   }
 
+  function isMobilePreview() {
+    return window.matchMedia('(max-width: 900px)').matches;
+  }
+
+  function getSheetWidthPx() {
+    // Prefer live layout width of unscaled viewport (transform does not affect offsetWidth)
+    const live = reportViewport && reportViewport.offsetWidth;
+    if (live && live > 50) return live;
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--a4-w').trim();
+    if (raw.endsWith('mm')) {
+      const mm = parseFloat(raw);
+      if (Number.isFinite(mm) && mm > 0) return mm * (96 / 25.4);
+    }
+    const orient = (window.Orientation && window.Orientation.orientation) || 'landscape';
+    return (orient === 'portrait' ? 210 : 297) * (96 / 25.4);
+  }
+
+  function applyPreviewLayoutSize() {
+    const wrap = $('preview-scale-wrap');
+    if (!wrap || !reportViewport) return;
+    const w = reportViewport.offsetWidth || getSheetWidthPx();
+    const h = Math.max(reportViewport.scrollHeight, reportViewport.offsetHeight);
+    wrap.style.width = `${Math.ceil(w * currentZoom)}px`;
+    wrap.style.height = `${Math.ceil(h * currentZoom)}px`;
+  }
+
   function setZoom(v) {
-    currentZoom = Math.min(1.2, Math.max(0.35, Math.round(v * 100) / 100));
+    currentZoom = Math.min(1.2, Math.max(0.22, Math.round(v * 100) / 100));
     reportViewport.style.setProperty('--preview-scale', String(currentZoom));
     zoomVal.textContent = `${Math.round(currentZoom * 100)}%`;
+    applyPreviewLayoutSize();
+  }
+
+  /** Fit A4 sheet width into .preview-scroll (minus padding). Mobile default. */
+  function fitPreviewToWidth() {
+    const scroll = document.querySelector('.preview-scroll');
+    if (!scroll || !reportViewport) return;
+    const cs = getComputedStyle(scroll);
+    const pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+    const availableWidth = Math.max(40, scroll.clientWidth - pad);
+    const sheetWidth = getSheetWidthPx();
+    let scale = availableWidth / sheetWidth;
+    scale = Math.min(1.0, Math.max(0.22, scale));
+    setZoom(scale);
+  }
+
+  function resetZoom() {
+    if (isMobilePreview()) fitPreviewToWidth();
+    else setZoom(0.72);
   }
 
   function currentStudent() {
@@ -458,16 +503,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (stage && window.Orientation) {
       stage.setAttribute('data-orientation', window.Orientation.orientation);
     }
-    requestAnimationFrame(() => checkOverflow());
+    requestAnimationFrame(() => {
+      checkOverflow();
+      applyPreviewLayoutSize();
+    });
   }
 
   if (window.Theme) {
-    window.Theme.onChange = () => renderPreview();
+    window.Theme.onChange = () => {
+      renderPreview();
+      requestAnimationFrame(() => {
+        if (isMobilePreview()) fitPreviewToWidth();
+        else applyPreviewLayoutSize();
+      });
+    };
   }
   if (window.Orientation) {
     window.Orientation.onChange = () => {
-      setZoom(currentZoom);
       renderPreview();
+      requestAnimationFrame(() => {
+        if (isMobilePreview()) fitPreviewToWidth();
+        else {
+          setZoom(currentZoom);
+          applyPreviewLayoutSize();
+        }
+      });
     };
   }
 
@@ -745,7 +805,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   // —— 縮放 ——
   $('btn-zoom-in').addEventListener('click', () => setZoom(currentZoom + 0.06));
   $('btn-zoom-out').addEventListener('click', () => setZoom(currentZoom - 0.06));
-  $('btn-zoom-reset').addEventListener('click', () => setZoom(0.72));
+  $('btn-zoom-reset').addEventListener('click', () => resetZoom());
+
+  let _previewResizeTimer = null;
+  function schedulePreviewRefit() {
+    clearTimeout(_previewResizeTimer);
+    _previewResizeTimer = setTimeout(() => {
+      if (isMobilePreview()) fitPreviewToWidth();
+      else applyPreviewLayoutSize();
+    }, 120);
+  }
+  window.addEventListener('resize', schedulePreviewRefit);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      if (isMobilePreview()) fitPreviewToWidth();
+      else applyPreviewLayoutSize();
+    }, 180);
+  });
 
   window.DataStore.onChange((type) => {
     if (String(type).startsWith('saved:')) {
@@ -760,7 +836,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  setZoom(currentZoom);
   refreshCategorySelects();
   loadStudentForm();
+  // Mobile: auto-fit full sheet width; desktop keeps ~72%
+  requestAnimationFrame(() => {
+    if (isMobilePreview()) fitPreviewToWidth();
+    else setZoom(0.72);
+  });
 });

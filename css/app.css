@@ -541,7 +541,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: 8px; padding: 8px 12px; background: #2d3748; color: #edf2f7; flex-shrink: 0;
 }
+.zoom-label-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .zoom-label { font-size: 0.82rem; font-weight: 600; }
+.zoom-mobile-hint {
+  display: none;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #a0aec0;
+  line-height: 1.35;
+  max-width: 42ch;
+}
 .zoom-controls { display: flex; align-items: center; gap: 6px; }
 .zoom-btn {
   width: 36px; height: 36px; border-radius: var(--radius-sm); border: none;
@@ -554,11 +563,38 @@ button, input, select, textarea { font: inherit; color: inherit; }
   -webkit-overflow-scrolling: touch;
 }
 
-.report-viewport {
-  transform: scale(var(--preview-scale, 0.72));
-  transform-origin: top center;
-  width: var(--a4-w);
+/* Wrapper sized to scaled sheet so scroll area includes full page */
+.preview-scale-wrap {
+  position: relative;
   margin: 0 auto;
+  /* width/height set by JS = sheet × scale */
+}
+
+.report-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(var(--preview-scale, 0.72));
+  /* top left required with scaled-size wrap compensation */
+  transform-origin: top left;
+  width: var(--a4-w);
+}
+
+
+/* Mobile preview: left-aligned fit-to-width scrolling */
+@media (max-width: 900px) {
+  .report-viewport {
+    transform-origin: top left;
+  }
+  .preview-scale-wrap {
+    margin: 0; /* left-align so horizontal scroll feels natural */
+  }
+  .zoom-mobile-hint {
+    display: block;
+  }
+  .preview-scroll {
+    padding: 12px;
+  }
 }
 
 /* —— Report sheet (Modern International Academy) —— */
