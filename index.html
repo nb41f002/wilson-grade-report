@@ -70,6 +70,7 @@
       <button type="button" class="btn btn-secondary" id="btn-reset-sample" data-i18n="btnSample">示範資料</button>
       <button type="button" class="btn btn-print" id="btn-print-current" data-i18n="btnPrintCurrent">列印此生</button>
       <button type="button" class="btn btn-accent" id="btn-print-all" data-i18n="btnPrintAll">全班連印</button>
+      <p class="print-hint no-print" data-i18n="printHint">列印時請關閉「頁首與頁尾／Headers and footers」，否則瀏覽器仍會印日期與網址。</p>
     </div>
   </header>
 
@@ -110,6 +111,19 @@
                 <label><span data-i18n="weightMid">期中</span> <input type="number" id="input-weight-mid" class="form-input weight-input" min="0" max="100"></label>
                 <label><span data-i18n="weightDaily">平時</span> <input type="number" id="input-weight-daily" class="form-input weight-input" min="0" max="100"></label>
               </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="select-grade-level" data-i18n="labelGradeLevel">年級（科目篩選）</label>
+              <select id="select-grade-level" class="form-input grade-select">
+                <option value="" data-i18n="gradeLevelAll">未指定（全部科目）</option>
+                <option value="1" data-i18n="gradeLevel1">一年級 G1</option>
+                <option value="2" data-i18n="gradeLevel2">二年級 G2</option>
+                <option value="3" data-i18n="gradeLevel3">三年級 G3</option>
+                <option value="4" data-i18n="gradeLevel4">四年級 G4</option>
+                <option value="5" data-i18n="gradeLevel5">五年級 G5</option>
+                <option value="6" data-i18n="gradeLevel6">六年級 G6</option>
+              </select>
+              <p class="section-hint" data-i18n="gradeStubHint" style="margin-top:4px">年級科目對照為暫定 STUB，待同學提供正式欄位表。</p>
             </div>
             <div class="form-group span-2">
               <label class="chk-line"><input type="checkbox" id="chk-homeroom" checked> <span data-i18n="chkHomeroom">簽名區顯示「導師」欄</span></label>
@@ -281,6 +295,9 @@
   <script src="js/layouts/fashion-portrait.js"></script>
   <script src="js/layouts/pro-landscape.js"></script>
   <script src="js/layouts/pro-portrait.js"></script>
+  <script src="js/layouts/cover.js"></script>
+  <script src="js/layouts/explanation.js"></script>
+  <script src="js/grade-subjects.js"></script>
   <script src="js/report.js"></script>
   <script src="js/app.js"></script>
 </body>

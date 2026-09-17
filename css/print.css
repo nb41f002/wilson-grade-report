@@ -1,19 +1,19 @@
-/* A4 print — landscape / portrait via named pages + data-orientation */
+/* A4 print — zero browser margin; design padding lives on .report-sheet */
 
 @page report-landscape {
   size: A4 landscape;
-  margin: 8mm 10mm;
+  margin: 0;
 }
 
 @page report-portrait {
   size: A4 portrait;
-  margin: 10mm 11mm;
+  margin: 0;
 }
 
 /* Default for browsers that ignore named pages */
 @page {
   size: A4 landscape;
-  margin: 8mm 10mm;
+  margin: 0;
 }
 
 html[data-orientation="portrait"] {
@@ -92,16 +92,17 @@ html[data-orientation="portrait"] {
 
   .report-sheet.a4-landscape {
     page: report-landscape;
-    width: 277mm !important;
-    height: 194mm !important;
-    max-height: 194mm !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: 100% !important;
+    max-height: 210mm !important;
     min-height: 0 !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
+    margin: 0 !important;
+    padding: 8mm 10mm 7mm !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     page-break-after: always !important;
     page-break-inside: avoid !important;
     break-after: page !important;
@@ -116,16 +117,17 @@ html[data-orientation="portrait"] {
 
   .report-sheet.a4-portrait {
     page: report-portrait;
-    width: 188mm !important;
-    height: 277mm !important;
-    max-height: 277mm !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 100% !important;
+    max-height: 297mm !important;
     min-height: 0 !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
+    margin: 0 !important;
+    padding: 10mm 11mm 9mm !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     page-break-after: always !important;
     page-break-inside: avoid !important;
     break-after: page !important;
@@ -137,9 +139,15 @@ html[data-orientation="portrait"] {
     font-family: var(--font) !important;
   }
 
-  /* Classical ornate: keep inset frame via padding on safe area */
+  /* Classical ornate: fit full A4 — padding inside sheet, never clip right edge */
+  .report-sheet.ornate-frame {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
   .report-sheet.ornate-frame.a4-landscape {
-    padding: 0 !important;
+    padding: 4.5mm !important;
     background: var(--paper, #FBF8F0) !important;
     box-shadow:
       inset 0 0 0 1.1pt var(--gold),
@@ -147,7 +155,7 @@ html[data-orientation="portrait"] {
       inset 0 0 0 3.6pt color-mix(in srgb, var(--gold) 55%, transparent) !important;
   }
   .report-sheet.ornate-frame.a4-portrait {
-    padding: 0 !important;
+    padding: 5mm !important;
     background: var(--paper, #FBF8F0) !important;
     box-shadow:
       inset 0 0 0 1.1pt var(--gold),
@@ -155,13 +163,19 @@ html[data-orientation="portrait"] {
       inset 0 0 0 3.6pt color-mix(in srgb, var(--gold) 55%, transparent) !important;
   }
   .report-sheet.ornate-frame .classical-safe {
-    margin: 3mm !important;
+    margin: 2.2mm !important;
     flex: 1 !important;
     min-height: 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
     border: 0.9pt solid color-mix(in srgb, var(--gold) 70%, var(--frame-inner, #C6B99E)) !important;
     outline: 0.45pt solid color-mix(in srgb, var(--frame-outer, #8E8068) 40%, transparent) !important;
-    outline-offset: 1.4mm !important;
+    outline-offset: 1.2mm !important;
   }
+
   .classical-meta-strip {
     background: color-mix(in srgb, var(--gold-soft, #F4EBD7) 55%, transparent) !important;
     border-top-color: color-mix(in srgb, var(--gold) 75%, transparent) !important;
@@ -489,6 +503,25 @@ html[data-orientation="portrait"] {
     print-color-adjust: exact !important;
   }
 }
+
+  /* Cover + explanation sheets */
+  .report-sheet.cover-sheet,
+  .report-sheet.explanation-sheet {
+    overflow: visible !important;
+  }
+  .report-sheet.cover-sheet .page-continue,
+  .report-sheet.explanation-sheet .page-continue {
+    display: none !important;
+  }
+
+  /* Body continue footer: only on body sheets */
+  .page-continue {
+    flex-shrink: 0;
+    font-size: 7pt !important;
+    color: var(--text-muted, #667) !important;
+    text-align: center;
+    padding-top: 1.5mm;
+  }
 
 @media print {
   .classical-portrait .portrait-table th,

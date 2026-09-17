@@ -73,6 +73,7 @@ window.DataStore = {
       nameZh: '威爾森國際小學',
       academicYear: 'The Second Semester of the 114th Academic Year',
       term: 'Midterm',
+      gradeLevel: '4',
       weights: { midterm: 40, daily: 60 },
       signatures: {
         teacher: 'Teacher / 教師',
@@ -148,6 +149,7 @@ window.DataStore = {
         nameZh: '威爾森國際小學',
         academicYear: 'The Second Semester of the 114th Academic Year',
         term: 'Midterm',
+        gradeLevel: '4',
         weights: { midterm: 40, daily: 60 },
         signatures: {
           teacher: 'Teacher / 教師',

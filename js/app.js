@@ -146,6 +146,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('input-weight-mid').value = si.weights.midterm;
     $('input-weight-daily').value = si.weights.daily;
     $('chk-homeroom').checked = si.showHomeroomLine !== false;
+    const gradeSel = $('select-grade-level');
+    if (gradeSel) gradeSel.value = si.gradeLevel || '';
 
     refreshSelector();
     renderSubjectCards();
@@ -464,11 +466,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const warn = $('overflow-warning');
     if (!warn) return;
     const sheets = reportViewport.querySelectorAll('.report-sheet');
+    const bodySheets = reportViewport.querySelectorAll('.report-sheet[data-sheet-kind="body"], .report-sheet.body-sheet');
+    const measureSheets = bodySheets.length ? bodySheets : sheets;
     let overflow = false;
     const orient = (window.Orientation && window.Orientation.orientation) || 'landscape';
     // A4 page height in CSS px (96dpi ≈ 3.78px/mm)
     const pageH = (orient === 'portrait' ? 297 : 210) * (96 / 25.4);
-    sheets.forEach((sheet) => {
+    measureSheets.forEach((sheet) => {
       const tall = sheet.offsetHeight > pageH + 12;
       if (tall) {
         sheet.classList.add('compact-print');
@@ -478,7 +482,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         sheet.classList.remove('compact-print');
       }
     });
-    if (previewMode === 'current' && sheets.length > 2) overflow = true;
+    // Max 2 grade-body pages (cover + explanation are extra and expected)
+    if (previewMode === 'current' && measureSheets.length > 2) overflow = true;
     if (overflow) {
       warn.hidden = false;
       warn.textContent = t('overflowWarn');
@@ -601,6 +606,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderPreview();
   });
 
+  // —— 年級科目篩選（STUB）——
+  const gradeSelect = $('select-grade-level');
+  if (gradeSelect) {
+    gradeSelect.value = window.DataStore.data.schoolInfo.gradeLevel || '';
+    gradeSelect.addEventListener('change', () => {
+      window.DataStore.data.schoolInfo.gradeLevel = gradeSelect.value;
+      if (window.GradeSubjects) {
+        window.GradeSubjects.applyToSubjects(
+          window.DataStore.data.availableSubjects,
+          gradeSelect.value
+        );
+      }
+      window.DataStore.saveImmediate();
+      renderSubjectsConfig();
+      renderSubjectCards();
+      renderPreview();
+      refreshSelector();
+    });
+  }
+
   // —— 學生導覽 ——
   studentSelect.addEventListener('change', (e) => {
     currentStudentIndex = Number(e.target.value);
@@ -705,9 +730,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // —— 列印 / 備份 ——
+  function preparePrint() {
+    document.documentElement.classList.add('print-ready');
+    document.body.classList.add('print-ready');
+  }
+  function restoreAfterPrint() {
+    document.documentElement.classList.remove('print-ready');
+    document.body.classList.remove('print-ready');
+  }
+
   $('btn-print-current').addEventListener('click', () => {
     previewMode = 'current';
     renderPreview();
+    preparePrint();
     setTimeout(() => window.print(), 80);
   });
   $('btn-print-all').addEventListener('click', () => {
@@ -715,9 +750,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!confirm(`${t('confirmPrintAll')} ${n} ${t('confirmPrintAllQ')}`)) return;
     previewMode = 'all';
     renderPreview();
+    preparePrint();
     setTimeout(() => {
       window.print();
       previewMode = 'current';
+      restoreAfterPrint();
       renderPreview();
     }, 120);
   });
@@ -830,6 +867,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   window.addEventListener('afterprint', () => {
+    restoreAfterPrint();
     if (previewMode !== 'current') {
       previewMode = 'current';
       renderPreview();
@@ -838,6 +876,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   refreshCategorySelects();
   loadStudentForm();
+  if (window.GradeSubjects && window.DataStore.data.schoolInfo.gradeLevel) {
+    window.GradeSubjects.applyToSubjects(
+      window.DataStore.data.availableSubjects,
+      window.DataStore.data.schoolInfo.gradeLevel
+    );
+    renderSubjectsConfig();
+    renderSubjectCards();
+    renderPreview();
+  }
   // Mobile: auto-fit full sheet width; desktop keeps ~72%
   requestAnimationFrame(() => {
     if (isMobilePreview()) fitPreviewToWidth();
