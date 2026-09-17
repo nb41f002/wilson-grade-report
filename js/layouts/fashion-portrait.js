@@ -141,7 +141,7 @@
             ${habitMatrix(enabled, student, schoolInfo)}
             ${assessmentList(enabled, student, schoolInfo)}
             ${p.renderLegend()}
-            <footer class="fashion-footer">${p.renderFooter(schoolInfo, student)}</footer>
+            <div class="fashion-footer">${p.renderFooter(schoolInfo, student)}</div>
           </main>
         </div>
       </article>`;
@@ -164,7 +164,7 @@
           ${continued(schoolInfo, student, 2, 2)}
           ${assessmentList(enabled, student, schoolInfo)}
           ${p.renderLegend()}
-          <footer class="fashion-footer">${p.renderFooter(schoolInfo, student)}</footer>
+          <div class="fashion-footer">${p.renderFooter(schoolInfo, student)}</div>
         </main>
       </div>
     </article>`;

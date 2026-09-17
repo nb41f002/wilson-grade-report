@@ -119,7 +119,7 @@
             ${habitsMatrix(enabled, student, schoolInfo)}
             ${assessments(enabled, student, schoolInfo)}
             ${p.renderLegend()}
-            <footer class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+            <div class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</div>
           </main>
         </div>
       </article>`;
@@ -139,7 +139,7 @@
         <main class="editorial-content">
           ${assessments(enabled, student, schoolInfo)}
           ${p.renderLegend()}
-          <footer class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+          <div class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</div>
         </main>
       </div>
     </article>`;

@@ -409,10 +409,16 @@ html[data-orientation="portrait"] {
     height: 100% !important;
     align-items: stretch !important;
   }
-  .playful-grid {
+  .playful-grid,
+  .fashion-grid,
+  .pro-grid,
+  .fashion-portrait-grid {
     grid-template-rows: minmax(0, 1fr) !important;
   }
-  .learning-main {
+  .learning-main,
+  .editorial-content,
+  .pro-report-body,
+  .fashion-page-main {
     display: flex !important;
     flex-direction: column !important;
     align-self: stretch !important;
@@ -422,11 +428,25 @@ html[data-orientation="portrait"] {
   .learning-main > .playful-footer,
   .learning-main > .report-footer,
   .playful-portrait > .playful-footer,
-  .playful-portrait > .report-footer {
+  .playful-portrait > .report-footer,
+  .editorial-content > .editorial-signatures,
+  .editorial-content > .report-footer,
+  .pro-report-body > .pro-signatures,
+  .pro-report-body > .pro-footer,
+  .pro-report-body > .report-footer,
+  .pro-portrait > .pro-signatures,
+  .pro-portrait > .pro-footer,
+  .pro-portrait > .report-footer,
+  .fashion-page-main > .fashion-footer,
+  .fashion-page-main > .report-footer {
     margin-top: auto !important;
     flex-shrink: 0 !important;
   }
-  .playful-footer {
+  .playful-footer,
+  .editorial-signatures,
+  .pro-signatures,
+  .pro-footer,
+  .fashion-footer {
     width: 100% !important;
     flex-shrink: 0 !important;
   }

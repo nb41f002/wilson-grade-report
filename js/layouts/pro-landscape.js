@@ -140,7 +140,7 @@
             ${habits(enabled, student, schoolInfo)}
             ${assessments(enabled, student, schoolInfo)}
             ${p.renderLegend()}
-            <footer class="pro-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+            <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
           </main>
         </div>
       </article>`;
@@ -162,7 +162,7 @@
           <header class="pro-continued-body">REPORT — ${p.escapeHtml(p.t('continued'))}</header>
           ${assessments(enabled, student, schoolInfo)}
           ${p.renderLegend()}
-          <footer class="pro-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+          <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
         </main>
       </div>
     </article>`;

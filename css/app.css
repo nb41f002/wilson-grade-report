@@ -2647,12 +2647,14 @@ html[data-theme="playful"] .habit-code {
 .fashion-grid {
   display: grid;
   grid-template-columns: minmax(0, 68mm) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   column-gap: 4mm;
   row-gap: 0;
   width: 100%;
   max-width: none;
   box-sizing: border-box;
   flex: 1 1 auto;
+  align-self: stretch;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -2717,14 +2719,28 @@ html[data-theme="playful"] .habit-code {
 .ed-student-sm { font-size: 8pt; font-weight: 700; color: var(--ink); }
 
 .editorial-content {
+  /* Do NOT set height/min-height:100% — that breaks grid stretch (circular %). */
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
   width: auto;
   max-width: none;
+  height: auto;
   gap: 2.5mm;
   box-sizing: border-box;
+}
+/* Push signatures to bottom of main column (align with masthead baseline) */
+.editorial-content > .editorial-signatures,
+.editorial-content > .report-footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+.editorial-signatures {
+  width: 100%;
+  flex-shrink: 0;
 }
 .editorial-content > * {
   min-width: 0;
@@ -2821,8 +2837,14 @@ html[data-theme="playful"] .habit-code {
 .fashion-portrait-grid {
   display: grid;
   grid-template-columns: 15mm 1fr;
+  grid-template-rows: minmax(0, 1fr);
   gap: 6mm;
-  flex: 1; min-height: 0; height: 100%;
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  align-items: stretch;
 }
 .vertical-brand-band {
   position: relative;
@@ -2838,7 +2860,25 @@ html[data-theme="playful"] .habit-code {
   color: var(--navy); display: flex; gap: 4mm;
 }
 .fashion-page-main {
-  display: flex; flex-direction: column; min-width: 0; gap: 2.5mm;
+  /* Do NOT set height/min-height:100% — that breaks grid stretch (circular %). */
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  gap: 2.5mm;
+  box-sizing: border-box;
+}
+.fashion-page-main > .fashion-footer,
+.fashion-page-main > .report-footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+.fashion-footer {
+  width: 100%;
+  flex-shrink: 0;
 }
 .fashion-masthead { position: relative; flex-shrink: 0; }
 .fm-top { display: flex; gap: 3mm; align-items: flex-start; }
@@ -2883,12 +2923,14 @@ html[data-theme="playful"] .habit-code {
 .pro-grid {
   display: grid;
   grid-template-columns: minmax(0, 52mm) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   column-gap: 3.5mm;
   row-gap: 0;
   width: 100%;
   max-width: none;
   box-sizing: border-box;
   flex: 1 1 auto;
+  align-self: stretch;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -2904,7 +2946,6 @@ html[data-theme="playful"] .habit-code {
   width: auto;
   max-width: none;
   min-height: 0;
-  height: 100%;
   border-radius: 0;
   box-sizing: border-box;
   overflow: hidden;
@@ -2935,14 +2976,35 @@ html[data-theme="playful"] .habit-code {
 .pro-rail-grade { font-size: 7pt; color: var(--text-muted); }
 
 .pro-report-body {
+  /* Do NOT set height/min-height:100% — that breaks grid stretch (circular %).
+     Stretch from .pro-grid align-items gives a definite used height so
+     margin-top:auto on the footer can pin signatures to the rail baseline. */
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   flex: 1 1 auto;
   min-width: 0;
+  min-height: 0;
   width: auto;
   max-width: none;
+  height: auto;
   gap: 2mm;
   box-sizing: border-box;
+}
+/* Push signatures to bottom of main column (align with rail Page n/n) */
+.pro-report-body > .pro-signatures,
+.pro-report-body > .pro-footer,
+.pro-report-body > .report-footer,
+.pro-portrait > .pro-signatures,
+.pro-portrait > .pro-footer,
+.pro-portrait > .report-footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+.pro-signatures,
+.pro-footer {
+  width: 100%;
+  flex-shrink: 0;
 }
 .pro-report-body > *,
 .pro-academic,

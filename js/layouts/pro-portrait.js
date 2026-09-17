@@ -148,7 +148,7 @@
         ${habitsGrid(enabled, student, schoolInfo)}
         ${assessmentLog(enabled, student, schoolInfo)}
         ${p.renderLegend()}
-        <footer class="pro-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+        <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
       </article>`;
     }
     return `<article ${p.sheetAttrs(student, 1, liveTheme(), 'portrait', 'pro-portrait')}>
@@ -161,7 +161,7 @@
       ${continued(schoolInfo, student, 2, 2)}
       ${assessmentLog(enabled, student, schoolInfo)}
       ${p.renderLegend()}
-      <footer class="pro-signatures">${p.renderFooter(schoolInfo, student)}</footer>
+      <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
     </article>`;
   };
 })();
