@@ -13,12 +13,10 @@
     return (window.Orientation && window.Orientation.orientation) || 'landscape';
   }
 
-  function renderCover(student, schoolInfo, packet = {}) {
+  function renderCover(student, schoolInfo, _packet = {}) {
     const p = P();
     const theme = liveTheme();
     const orientation = liveOrientation();
-    const packetPage = packet.page || 1;
-    const packetTotal = packet.total || 1;
     const school = p.schoolNames(schoolInfo);
     const names = p.studentDisplayName(student);
     const term = schoolInfo.term || 'Midterm';
@@ -72,7 +70,6 @@
           ${names.secondary ? `<div class="cover-student-name-zh">${p.escapeHtml(names.secondary)}</div>` : ''}
           ${meta}
         </div>
-        ${p.renderPageFoot({ page: packetPage, total: packetTotal, kind: 'cover' })}
       </div>`;
 
     return `

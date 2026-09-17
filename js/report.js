@@ -46,8 +46,8 @@ window.ReportRenderer = {
   },
 
   /**
-   * Remap body .sheet-page-foot markers into packet page numbers
-   * (cover=1, explanation=2, body starts at 3).
+   * Remap body .sheet-page-foot markers into packet page numbers.
+   * Cover is unnumbered; explanation = 1; body starts at 2 (offset = 1).
    */
   remapBodyPacketFeet(html, offset, packetTotal) {
     const p = window.ReportPrimitives;
@@ -78,14 +78,15 @@ window.ReportRenderer = {
     const fn = this.resolveLayoutFn(key);
     let body = this.tagBodySheets(fn(student, schoolInfo, subjects));
     const bodyCount = Math.max(1, this.countBodySheets(body));
-    const packetTotal = 2 + bodyCount;
+    // Cover unnumbered; content pages = explanation + body
+    const packetTotal = 1 + bodyCount;
     const cover = (window.CoverLayout && window.CoverLayout.render)
-      ? window.CoverLayout.render(student, schoolInfo, { page: 1, total: packetTotal })
+      ? window.CoverLayout.render(student, schoolInfo, {})
       : '';
     const explanation = (window.ExplanationLayout && window.ExplanationLayout.render)
-      ? window.ExplanationLayout.render(student, schoolInfo, { page: 2, total: packetTotal })
+      ? window.ExplanationLayout.render(student, schoolInfo, { page: 1, total: packetTotal })
       : '';
-    body = this.remapBodyPacketFeet(body, 2, packetTotal);
+    body = this.remapBodyPacketFeet(body, 1, packetTotal);
     return cover + explanation + body;
   },
 

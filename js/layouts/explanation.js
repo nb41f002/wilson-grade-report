@@ -17,8 +17,8 @@
     const p = P();
     const theme = liveTheme();
     const orientation = liveOrientation();
-    const packetPage = packet.page || 2;
-    const packetTotal = packet.total || 2;
+    const packetPage = packet.page || 1;
+    const packetTotal = packet.total || 1;
     const school = p.schoolNames(schoolInfo);
     const mW = schoolInfo?.weights?.midterm ?? 40;
     const dW = schoolInfo?.weights?.daily ?? 60;

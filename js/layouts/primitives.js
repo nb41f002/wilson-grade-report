@@ -167,30 +167,17 @@ window.ReportPrimitives = {
   },
 
   /**
-   * Unified page-foot copy.
+   * Page-foot / page-mark copy — digits only (e.g. "1", "2").
+   * Cover sheets must not call this; they have no page mark.
    * @param {{page?:number,total?:number,continued?:boolean,kind?:string}} opts
-   * kind: 'cover' | 'guide' | 'explanation' | ''
+   * total / continued / kind are ignored for display (kept for call-site compat).
    */
   formatPageFoot(opts = {}) {
     const page = Math.max(1, Number(opts.page) || 1);
-    const total = Math.max(page, Number(opts.total) || page);
-    const pagePart = `Page ${page} of ${total}`;
-    if (opts.continued) {
-      return `Continued on next page · ${pagePart}`;
-    }
-    const kind = String(opts.kind || '').toLowerCase();
-    if (kind === 'cover') {
-      return `${pagePart} · Cover`;
-    }
-    if (kind === 'guide' || kind === 'explanation') {
-      const locale = (window.I18n && window.I18n.locale) || 'zh';
-      const label = locale === 'en' ? 'Guide' : '成績說明';
-      return `${pagePart} · ${label}`;
-    }
-    return pagePart;
+    return String(page);
   },
 
-  /** HTML wrapper for centered page foot (cover / explanation / body). */
+  /** HTML wrapper for centered bottom page foot (explanation / body only). */
   renderPageFoot(opts = {}) {
     const page = Math.max(1, Number(opts.page) || 1);
     const total = Math.max(page, Number(opts.total) || page);

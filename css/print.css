@@ -509,7 +509,7 @@ html[data-orientation="portrait"] {
   .report-sheet.explanation-sheet {
     overflow: visible !important;
   }
-  /* Unified page feet print across cover / explanation / body */
+  /* Unified page feet print across explanation / body (cover has none) */
   .sheet-page-foot,
   .page-continue {
     flex-shrink: 0;
