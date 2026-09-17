@@ -36,7 +36,7 @@
               <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
               <strong class="term-value">${p.escapeHtml(term)}</strong>
             </div>
-            <div class="mia-page">Page ${pageNum} / ${totalPages}</div>
+            <div class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
           </div>
         </div>
       </header>
@@ -171,9 +171,7 @@
 
   function renderContinuedHeader(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
-    const grade = p.escapeHtml(student.classGrade || '');
     return `
       <header class="report-header-continued formal-portrait-continued">
         <div class="fp-continued">
@@ -182,8 +180,8 @@
             <div class="report-title-continued">${p.escapeHtml(p.reportTitleEn(schoolInfo.term || 'Midterm'))} — ${p.escapeHtml(p.t('continued'))}</div>
           </div>
           <div class="fp-continued-right">
-            <span>${p.escapeHtml(names.en)}${grade ? ` · ${grade}` : ''}</span>
-            <span class="mia-page">Page ${pageNum}/${totalPages}</span>
+            ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
+            <span class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</span>
           </div>
         </div>
       </header>`;
@@ -222,6 +220,7 @@
             ${p.renderLegend()}
           </div>
           ${p.renderFooter(schoolInfo, student)}
+          ${p.renderPageFoot({ page: 1, total: 1 })}
         </article>`;
     } else {
       html += `
@@ -232,7 +231,7 @@
             ${renderAcademicTable(enabled, student, schoolInfo)}
             ${renderHabitsTable(enabled, student, schoolInfo)}
           </div>
-          <div class="page-continue">${p.t('pageContinue')} 1 ${p.t('of')} 2</div>
+          ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
         </article>
         <article ${p.sheetAttrs(student, 2, liveTheme(), 'portrait', 'formal-portrait')}>
           ${renderContinuedHeader(schoolInfo, student, 2, 2)}
@@ -241,6 +240,7 @@
             ${p.renderLegend()}
           </div>
           ${p.renderFooter(schoolInfo, student)}
+          ${p.renderPageFoot({ page: 2, total: 2 })}
         </article>`;
     }
     return html;

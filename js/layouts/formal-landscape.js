@@ -61,7 +61,7 @@
               <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
               <strong class="term-value">${p.escapeHtml(term)}</strong>
             </div>
-            <div class="mia-page">Page ${pageNum} / ${totalPages}</div>
+            <div class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
           </div>
         </div>
         <section class="student-meta">
@@ -92,11 +92,9 @@
 
   function renderContinuedHeader(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
     const term = schoolInfo.term || 'Midterm';
     const titleEn = p.escapeHtml(p.reportTitleEn(term));
-    const grade = p.escapeHtml(student.classGrade || '');
     return `
       <header class="report-header report-header-continued">
         <div class="mia-continued">
@@ -105,8 +103,8 @@
             <div class="report-title-en report-title-continued">${titleEn} — ${p.escapeHtml(p.t('continued'))}</div>
           </div>
           <div class="mia-continued-right">
-            <span class="continued-student">${p.escapeHtml(names.en)}${grade ? ` · ${grade}` : ''}</span>
-            <span class="mia-page">Page ${pageNum} / ${totalPages}</span>
+            ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
+            <span class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</span>
           </div>
         </div>
       </header>
@@ -195,7 +193,8 @@
             ${renderTable(pageSubjects, student, schoolInfo)}
             ${isLast ? p.renderLegend() : ''}
           </div>
-          ${isLast ? p.renderFooter(schoolInfo, student) : `<div class="page-continue">${p.t('pageContinue')} ${pageNum} ${p.t('of')} ${totalPages}</div>`}
+          ${isLast ? p.renderFooter(schoolInfo, student) : ''}
+          ${p.renderPageFoot({ page: pageNum, total: totalPages, continued: !isLast })}
         </article>
       `;
     });

@@ -152,6 +152,61 @@ window.ReportPrimitives = {
     };
   },
 
+
+  formatStudentMetaLine(student) {
+    const parts = [];
+    const en = String(student?.englishName || '').trim();
+    const zh = String(student?.chineseName || '').trim();
+    const grade = String(student?.classGrade || '').trim();
+    const id = String(student?.studentId || '').trim();
+    if (en) parts.push(en);
+    if (zh) parts.push(zh);
+    if (grade) parts.push(grade);
+    if (id) parts.push(id);
+    return parts.join(' · ');
+  },
+
+  /**
+   * Unified page-foot copy.
+   * @param {{page?:number,total?:number,continued?:boolean,kind?:string}} opts
+   * kind: 'cover' | 'guide' | 'explanation' | ''
+   */
+  formatPageFoot(opts = {}) {
+    const page = Math.max(1, Number(opts.page) || 1);
+    const total = Math.max(page, Number(opts.total) || page);
+    const pagePart = `Page ${page} of ${total}`;
+    if (opts.continued) {
+      return `Continued on next page · ${pagePart}`;
+    }
+    const kind = String(opts.kind || '').toLowerCase();
+    if (kind === 'cover') {
+      return `${pagePart} · Cover`;
+    }
+    if (kind === 'guide' || kind === 'explanation') {
+      const locale = (window.I18n && window.I18n.locale) || 'zh';
+      const label = locale === 'en' ? 'Guide' : '成績說明';
+      return `${pagePart} · ${label}`;
+    }
+    return pagePart;
+  },
+
+  /** HTML wrapper for centered page foot (cover / explanation / body). */
+  renderPageFoot(opts = {}) {
+    const page = Math.max(1, Number(opts.page) || 1);
+    const total = Math.max(page, Number(opts.total) || page);
+    const continued = !!opts.continued;
+    const kind = String(opts.kind || '');
+    const text = this.formatPageFoot({ page, total, continued, kind });
+    return `<div class="sheet-page-foot" data-foot-page="${page}" data-foot-total="${total}" data-foot-continued="${continued ? 'true' : 'false'}" data-foot-kind="${this.escapeHtml(kind)}">${this.escapeHtml(text)}</div>`;
+  },
+
+  /** Escaped student identity line for continuation headers / sheet meta. */
+  renderStudentMetaLine(student, className = 'sheet-meta-line') {
+    const line = this.formatStudentMetaLine(student);
+    if (!line) return '';
+    return `<span class="${this.escapeHtml(className)}">${this.escapeHtml(line)}</span>`;
+  },
+
   renderLegend() {
     const locale = (window.I18n && window.I18n.locale) || 'zh';
     const item = (code, enKey, zhKey) => {
@@ -185,16 +240,21 @@ window.ReportPrimitives = {
     if (flags.mapPrintNote) noteBits.push(this.escapeHtml(notes.map || 'MAP Growth scores available upon request.'));
 
     const locale = (window.I18n && window.I18n.locale) || 'zh';
-    const sigBlock = (en, zh, custom) => {
-      let title = en;
-      let sub = zh;
-      if (custom && /[\/／]/.test(custom)) {
-        const parts = custom.split(/\s*[\/／]\s*/);
-        title = parts[0] || en;
-        sub = parts[1] || zh;
-      } else if (custom) {
-        title = custom;
+    const sigBlock = (enKey, zhKey, custom) => {
+      const enDefault = this.t(enKey);
+      const zhDefault = this.t(zhKey);
+      let title = enDefault;
+      let sub = zhDefault;
+      const c = String(custom || '').trim();
+      if (c && /[\/／]/.test(c)) {
+        const parts = c.split(/\s*[\/／]\s*/);
+        title = parts[0] || enDefault;
+        sub = parts[1] || zhDefault;
+      } else if (c && c !== zhDefault && c !== enDefault) {
+        // Non-default custom label without slash — keep as English title only
+        title = c;
       }
+      // Always bilingual when locale is zh (never collapse to 導師-only)
       const showZh = locale !== 'en' && sub && sub !== title;
       return `
         <div class="signature sig-block">
@@ -213,10 +273,10 @@ window.ReportPrimitives = {
         ${fleuron}
         ${noteBits.length ? `<div class="footer-notes">${noteBits.map((n) => `<span class="footer-note">※ ${n}</span>`).join('')}</div>` : ''}
         <div class="signature-grid${showHomeroom ? ' with-homeroom' : ''}">
-          ${showHomeroom ? sigBlock(this.t('sigHomeroom'), this.t('sigHomeroomZh'), sig.homeroom) : ''}
-          ${sigBlock(this.t('sigTeacher'), this.t('sigTeacherZh'), sig.teacher)}
-          ${sigBlock(this.t('sigDirector'), this.t('sigDirectorZh'), sig.director)}
-          ${sigBlock(this.t('sigPrincipal'), this.t('sigPrincipalZh'), sig.principal)}
+          ${showHomeroom ? sigBlock('sigHomeroom', 'sigHomeroomZh', sig.homeroom) : ''}
+          ${sigBlock('sigTeacher', 'sigTeacherZh', sig.teacher)}
+          ${sigBlock('sigDirector', 'sigDirectorZh', sig.director)}
+          ${sigBlock('sigPrincipal', 'sigPrincipalZh', sig.principal)}
         </div>
       </footer>
     `;

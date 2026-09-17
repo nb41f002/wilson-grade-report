@@ -17,9 +17,8 @@
         <aside class="pro-profile-rail pro-profile-compact">
           <img src="assets/wilson-crest.svg" alt="" class="crest-icon pro-crest">
           <div class="pro-doc-code">${p.escapeHtml(p.t('continued'))}</div>
-          <div class="pro-rail-name">${p.escapeHtml(names.en)}</div>
-          <div class="pro-rail-grade">${p.escapeHtml(student.classGrade || '')}</div>
-          <div class="pro-rail-page">Page ${pageNum}</div>
+          <div class="pro-rail-name sheet-meta-line">${p.escapeHtml(p.formatStudentMetaLine(student))}</div>
+          <div class="pro-rail-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
         </aside>`;
     }
     return `
@@ -39,7 +38,7 @@
           <span class="term-label">${p.escapeHtml(p.t('metaTerm'))}</span>
           <strong>${p.escapeHtml(term)}</strong>
         </div>
-        <div class="pro-rail-page">Page ${pageNum} / ${totalPages}</div>
+        <div class="pro-rail-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
       </aside>`;
   }
 
@@ -141,6 +140,7 @@
             ${assessments(enabled, student, schoolInfo)}
             ${p.renderLegend()}
             <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
+            ${p.renderPageFoot({ page: 1, total: 1 })}
           </main>
         </div>
       </article>`;
@@ -152,6 +152,7 @@
           ${bodyHeader(schoolInfo)}
           ${academic(enabled, student, schoolInfo)}
           ${habits(enabled, student, schoolInfo)}
+          ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
         </main>
       </div>
     </article>
@@ -163,6 +164,7 @@
           ${assessments(enabled, student, schoolInfo)}
           ${p.renderLegend()}
           <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
+          ${p.renderPageFoot({ page: 2, total: 2 })}
         </main>
       </div>
     </article>`;

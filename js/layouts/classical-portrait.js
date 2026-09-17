@@ -13,8 +13,6 @@
     const term = schoolInfo.term || 'Midterm';
     const year = p.escapeHtml(schoolInfo.academicYear || '');
     const titleEn = p.escapeHtml(p.reportTitleEn(term));
-    const roman = totalPages === 1 ? 'I' : (pageNum === 1 ? 'I' : 'II');
-    const romanTotal = totalPages === 1 ? 'I' : 'II';
     return `
       <header class="classical-centered-crest">
         <div class="classical-crest-center">
@@ -38,8 +36,7 @@
           </div>
           <div class="classical-meta-sep" aria-hidden="true">◆</div>
           <div class="classical-meta-cell classical-meta-page">
-            <span class="term-label">Page</span>
-            <strong class="classical-page-roman">${roman} / ${romanTotal}</strong>
+            <strong class="classical-page-roman">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</strong>
           </div>
         </div>
       </header>`;
@@ -172,9 +169,7 @@
 
   function continuedHeader(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
-    const grade = p.escapeHtml(student.classGrade || '');
     return `
       <header class="classical-continued-header classical-continued-portrait">
         <img src="assets/wilson-crest.svg" alt="" class="crest-icon classical-crest-sm">
@@ -182,7 +177,7 @@
           <div class="school-name school-name-sm">${p.escapeHtml(school.en)}</div>
           <div class="report-title-continued">${p.escapeHtml(p.reportTitleEn(schoolInfo.term || 'Midterm'))} — ${p.escapeHtml(p.t('continued'))}</div>
         </div>
-        <span class="continued-student">${p.escapeHtml(names.en)}${grade ? ` · ${grade}` : ''} · II</span>
+        ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
       </header>`;
   }
 
@@ -217,6 +212,7 @@
               <section class="classical-legend">${p.renderLegend()}</section>
             </div>
             ${p.renderFooter(schoolInfo, student, { classical: true })}
+            ${p.renderPageFoot({ page: 1, total: 1 })}
           </div>
         </article>`;
     } else {
@@ -230,7 +226,7 @@
               ${academicLedger(enabled, student, schoolInfo)}
               ${habitsLedger(enabled, student, schoolInfo)}
             </div>
-            <div class="page-continue">${p.t('pageContinue')} 1 ${p.t('of')} 2</div>
+            ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
           </div>
         </article>
         <article ${p.sheetAttrs(student, 2, liveTheme(), 'portrait', 'classical-portrait ornate-frame')}>
@@ -242,6 +238,7 @@
               <section class="classical-legend">${p.renderLegend()}</section>
             </div>
             ${p.renderFooter(schoolInfo, student, { classical: true })}
+            ${p.renderPageFoot({ page: 2, total: 2 })}
           </div>
         </article>`;
     }

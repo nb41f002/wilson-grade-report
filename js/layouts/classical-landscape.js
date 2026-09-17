@@ -23,7 +23,6 @@
     const term = schoolInfo.term || 'Midterm';
     const year = p.escapeHtml(schoolInfo.academicYear || '');
     const titleEn = p.escapeHtml(p.reportTitleEn(term));
-    const roman = totalPages === 1 ? 'I' : (pageNum === 1 ? 'I' : 'II');
     return `
       <header class="classical-crest-header">
         <div class="classical-crest-center">
@@ -47,8 +46,7 @@
           </div>
           <div class="classical-meta-sep" aria-hidden="true">◆</div>
           <div class="classical-meta-cell classical-meta-page">
-            <span class="term-label">Page</span>
-            <strong class="classical-page-roman">${roman}</strong>
+            <strong class="classical-page-roman">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</strong>
           </div>
         </div>
       </header>`;
@@ -140,15 +138,12 @@
 
   function continuedHeader(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
-    const grade = p.escapeHtml(student.classGrade || '');
-    const roman = pageNum === 1 ? 'I' : 'II';
     return `
       <header class="classical-continued-header">
         <span class="school-name school-name-sm">${p.escapeHtml(school.en)}</span>
         <span class="report-title-continued">${p.escapeHtml(p.reportTitleEn(schoolInfo.term || 'Midterm'))} — ${p.escapeHtml(p.t('continued'))}</span>
-        <span class="continued-student">${p.escapeHtml(names.en)}${grade ? ` · ${grade}` : ''} · ${roman}</span>
+        ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
       </header>`;
   }
 
@@ -172,9 +167,8 @@
               ${resultsLedger(pageSubjects, student, schoolInfo)}
               ${isLast ? `<section class="classical-legend">${p.renderLegend()}</section>` : ''}
             </div>
-            ${isLast
-              ? p.renderFooter(schoolInfo, student, { classical: true })
-              : `<div class="page-continue">${p.t('pageContinue')} ${pageNum} ${p.t('of')} ${totalPages}</div>`}
+            ${isLast ? p.renderFooter(schoolInfo, student, { classical: true }) : ''}
+            ${p.renderPageFoot({ page: pageNum, total: totalPages, continued: !isLast })}
           </div>
         </article>`;
     });

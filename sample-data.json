@@ -11,7 +11,7 @@
       "teacher": "Teacher / 教師",
       "director": "Director / 主任",
       "principal": "Principal / 校長",
-      "homeroom": "導師"
+      "homeroom": "Homeroom Teacher / 導師"
     },
     "showHomeroomLine": true,
     "flags": {

@@ -79,7 +79,7 @@ window.DataStore = {
         teacher: 'Teacher / 教師',
         director: 'Director / 主任',
         principal: 'Principal / 校長',
-        homeroom: '導師'
+        homeroom: 'Homeroom Teacher / 導師'
       },
       showHomeroomLine: true,
       flags: {
@@ -93,6 +93,14 @@ window.DataStore = {
         map: 'MAP Growth scores available upon request.'
       }
     }, d.schoolInfo || {});
+
+    // Normalize legacy Chinese-only homeroom label → bilingual
+    if (d.schoolInfo.signatures) {
+      const h = String(d.schoolInfo.signatures.homeroom || '').trim();
+      if (!h || h === '導師') {
+        d.schoolInfo.signatures.homeroom = 'Homeroom Teacher / 導師';
+      }
+    }
     d.schoolInfo.weights = Object.assign({ midterm: 40, daily: 60 }, d.schoolInfo.weights || {});
     d.schoolInfo.flags = Object.assign({
       internationalStudent: false,
@@ -155,7 +163,7 @@ window.DataStore = {
           teacher: 'Teacher / 教師',
           director: 'Director / 主任',
           principal: 'Principal / 校長',
-          homeroom: '導師'
+          homeroom: 'Homeroom Teacher / 導師'
         },
         showHomeroomLine: true,
         flags: {

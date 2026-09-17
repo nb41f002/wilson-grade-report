@@ -24,7 +24,7 @@
           <div class="playful-hero-term rail-term-card">
             <strong>${p.escapeHtml(term)}</strong>
             <span>${year || '—'}</span>
-            <span class="mia-page">Page ${pageNum}/${totalPages}</span>
+            <span class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</span>
           </div>
         </div>
         <div class="playful-hero-title">
@@ -125,14 +125,13 @@
 
   function continued(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
     return `
       <header class="playful-continued">
         <img src="assets/wilson-crest.svg" alt="" class="crest-icon playful-crest-sm">
         <div class="school-name school-name-sm">${p.escapeHtml(school.en)}</div>
         <div class="report-title-continued">LEARNING REPORT — ${p.escapeHtml(p.t('continued'))}</div>
-        <span>${p.escapeHtml(names.en)} / Page ${pageNum} of ${totalPages}</span>
+        ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
       </header>`;
   }
 
@@ -150,6 +149,7 @@
         ${assessmentStack(enabled, student, schoolInfo)}
         ${p.renderLegend()}
         <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
+        ${p.renderPageFoot({ page: 1, total: 1 })}
       </article>`;
     }
     return `<article ${p.sheetAttrs(student, 1, liveTheme(), 'portrait', 'playful-portrait')}>
@@ -157,12 +157,14 @@
       ${studentCard(schoolInfo, student)}
       ${scoreTable(enabled, student, schoolInfo)}
       ${habitGrid(enabled, student, schoolInfo)}
+      ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
     </article>
     <article ${p.sheetAttrs(student, 2, liveTheme(), 'portrait', 'playful-portrait')}>
       ${continued(schoolInfo, student, 2, 2)}
       ${assessmentStack(enabled, student, schoolInfo)}
       ${p.renderLegend()}
       <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
+      ${p.renderPageFoot({ page: 2, total: 2 })}
     </article>`;
   };
 })();

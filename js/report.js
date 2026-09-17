@@ -23,29 +23,69 @@ window.ReportRenderer = {
     return layouts['formal:landscape'] || (() => '<!-- missing layout -->');
   },
 
-  /** Tag body articles so overflow checks ignore cover/explanation. */
+  /** Tag top-level report sheets only (ignore nested assessment <article>s). */
   tagBodySheets(html) {
     return String(html || '').replace(/<article\b([^>]*)>/g, (match, attrs) => {
-      let next = attrs || '';
-      if (!/data-sheet-kind=/.test(next)) next += ' data-sheet-kind="body"';
-      if (!/\bbody-sheet\b/.test(next)) {
-        if (/\bclass="/.test(next)) next = next.replace(/\bclass="/, 'class="body-sheet ');
-        else next += ' class="body-sheet"';
+      const next = attrs || '';
+      // Only mark real report sheets (have report-sheet class from sheetAttrs)
+      if (!/\breport-sheet\b/.test(next)) return match;
+      let out = next;
+      if (!/data-sheet-kind=/.test(out)) out += ' data-sheet-kind="body"';
+      if (!/\bbody-sheet\b/.test(out)) {
+        if (/\bclass="/.test(out)) out = out.replace(/\bclass="/, 'class="body-sheet ');
+        else out += ' class="body-sheet"';
       }
-      return `<article${next}>`;
+      return `<article${out}>`;
     });
+  },
+
+  /** Count top-level report-sheet articles only (not nested assessment blocks). */
+  countBodySheets(html) {
+    const matches = String(html || '').match(/<article\b[^>]*\breport-sheet\b[^>]*>/gi);
+    return matches ? matches.length : 0;
+  },
+
+  /**
+   * Remap body .sheet-page-foot markers into packet page numbers
+   * (cover=1, explanation=2, body starts at 3).
+   */
+  remapBodyPacketFeet(html, offset, packetTotal) {
+    const p = window.ReportPrimitives;
+    if (!p) return html;
+    return String(html || '').replace(
+      /<div class="sheet-page-foot"([^>]*)>[^<]*<\/div>/g,
+      (match, attrs) => {
+        const pageM = /data-foot-page="(\d+)"/.exec(attrs || '');
+        if (!pageM) return match;
+        const local = Number(pageM[1]);
+        const continued = /data-foot-continued="true"/.test(attrs || '');
+        const kindM = /data-foot-kind="([^"]*)"/.exec(attrs || '');
+        const kind = kindM ? kindM[1] : '';
+        const packetPage = local + offset;
+        const text = p.formatPageFoot({
+          page: packetPage,
+          total: packetTotal,
+          continued,
+          kind: kind || undefined
+        });
+        return `<div class="sheet-page-foot" data-foot-page="${packetPage}" data-foot-total="${packetTotal}" data-foot-continued="${continued ? 'true' : 'false'}" data-foot-kind="${p.escapeHtml(kind)}">${p.escapeHtml(text)}</div>`;
+      }
+    );
   },
 
   renderStudentReport(student, schoolInfo, subjects) {
     const key = this.layoutKey();
     const fn = this.resolveLayoutFn(key);
-    const body = this.tagBodySheets(fn(student, schoolInfo, subjects));
+    let body = this.tagBodySheets(fn(student, schoolInfo, subjects));
+    const bodyCount = Math.max(1, this.countBodySheets(body));
+    const packetTotal = 2 + bodyCount;
     const cover = (window.CoverLayout && window.CoverLayout.render)
-      ? window.CoverLayout.render(student, schoolInfo)
+      ? window.CoverLayout.render(student, schoolInfo, { page: 1, total: packetTotal })
       : '';
     const explanation = (window.ExplanationLayout && window.ExplanationLayout.render)
-      ? window.ExplanationLayout.render(student, schoolInfo)
+      ? window.ExplanationLayout.render(student, schoolInfo, { page: 2, total: packetTotal })
       : '';
+    body = this.remapBodyPacketFeet(body, 2, packetTotal);
     return cover + explanation + body;
   },
 

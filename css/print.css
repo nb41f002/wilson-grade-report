@@ -509,18 +509,19 @@ html[data-orientation="portrait"] {
   .report-sheet.explanation-sheet {
     overflow: visible !important;
   }
-  .report-sheet.cover-sheet .page-continue,
-  .report-sheet.explanation-sheet .page-continue {
-    display: none !important;
-  }
-
-  /* Body continue footer: only on body sheets */
+  /* Unified page feet print across cover / explanation / body */
+  .sheet-page-foot,
   .page-continue {
     flex-shrink: 0;
     font-size: 7pt !important;
     color: var(--text-muted, #667) !important;
-    text-align: center;
+    text-align: center !important;
     padding-top: 1.5mm;
+    margin-top: 2mm;
+  }
+  .sheet-meta-line {
+    font-size: 7pt !important;
+    color: var(--text-muted, #667) !important;
   }
 
 @media print {

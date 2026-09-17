@@ -23,7 +23,7 @@
         <div class="inst-term">
           <strong>${p.escapeHtml(term)}</strong>
           <span>${year || '—'}</span>
-          <span class="mia-page">Page ${pageNum}/${totalPages}</span>
+          <span class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</span>
         </div>
       </header>`;
   }
@@ -125,13 +125,12 @@
 
   function continued(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     const school = p.schoolNames(schoolInfo);
     return `
       <header class="pro-continued">
         <span class="school-name school-name-sm">${p.escapeHtml(school.en)}</span>
         <span>REPORT — ${p.escapeHtml(p.t('continued'))}</span>
-        <span>${p.escapeHtml(names.en)} / Page ${pageNum}</span>
+        ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
       </header>`;
   }
 
@@ -149,6 +148,7 @@
         ${assessmentLog(enabled, student, schoolInfo)}
         ${p.renderLegend()}
         <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
+        ${p.renderPageFoot({ page: 1, total: 1 })}
       </article>`;
     }
     return `<article ${p.sheetAttrs(student, 1, liveTheme(), 'portrait', 'pro-portrait')}>
@@ -156,12 +156,14 @@
       ${metaTable(schoolInfo, student)}
       ${resultsGrid(enabled, student, schoolInfo)}
       ${habitsGrid(enabled, student, schoolInfo)}
+      ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
     </article>
     <article ${p.sheetAttrs(student, 2, liveTheme(), 'portrait', 'pro-portrait')}>
       ${continued(schoolInfo, student, 2, 2)}
       ${assessmentLog(enabled, student, schoolInfo)}
       ${p.renderLegend()}
       <div class="pro-signatures">${p.renderFooter(schoolInfo, student)}</div>
+      ${p.renderPageFoot({ page: 2, total: 2 })}
     </article>`;
   };
 })();

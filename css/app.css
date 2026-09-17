@@ -1062,11 +1062,31 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .legend-sep { color: var(--border); display: none; }
 
+/* Unified sheet footers (all themes / cover / explanation / body) */
+.sheet-page-foot,
 .page-continue {
   text-align: center;
   font-size: var(--fs-meta);
   color: var(--text-muted);
   margin-top: 3mm;
+  padding-top: 1.5mm;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  width: 100%;
+}
+.sheet-meta-line,
+.continued-student.sheet-meta-line {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.explanation-student-chip.sheet-meta-line {
+  white-space: normal;
+  text-align: center;
 }
 
 .report-footer,
@@ -1104,6 +1124,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin-bottom: 1.5mm;
   margin-top: 0;
 }
+/* Unified signature bilingual labels (Homeroom Teacher / 導師 …) */
 .sig-title,
 .signature strong {
   display: block;
@@ -3352,11 +3373,16 @@ html[data-theme="playful"] .habit-code {
   font-weight: 700;
   color: var(--navy);
 }
-.cover-footer-note {
+.cover-footer-note,
+.cover-sheet .sheet-page-foot {
   text-align: center;
   font-size: 8pt;
   color: var(--text-muted);
   margin-top: 6mm;
+}
+.explanation-sheet .sheet-page-foot {
+  text-align: center;
+  margin-top: 4mm;
 }
 
 /* Theme-specific cover chrome */

@@ -22,10 +22,9 @@
           </div>
           <div class="rail-continued">${p.escapeHtml(p.t('continued'))}</div>
           <div class="rail-student-card rail-student-card-sm">
-            <div class="rail-student-sm">${p.escapeHtml(names.en)}</div>
-            <div class="rail-grade-sm">${p.escapeHtml(student.classGrade || '')}</div>
+            <div class="rail-student-sm sheet-meta-line">${p.escapeHtml(p.formatStudentMetaLine(student))}</div>
           </div>
-          <div class="mia-page rail-page">Page ${pageNum}/${totalPages}</div>
+          <div class="mia-page rail-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
         </aside>`;
     }
     return `
@@ -58,7 +57,7 @@
             <strong>${p.escapeHtml(term)}</strong>
           </div>
         </div>
-        <div class="mia-page rail-page">Page ${pageNum} / ${totalPages}</div>
+        <div class="mia-page rail-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
       </aside>`;
   }
 
@@ -172,6 +171,7 @@
             ${assessmentGrid(enabled, student, schoolInfo)}
             ${p.renderLegend()}
             <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
+            ${p.renderPageFoot({ page: 1, total: 1 })}
           </main>
         </div>
       </article>`;
@@ -183,6 +183,7 @@
             ${studentStrip(schoolInfo, student)}
             ${academicPanel(enabled, student, schoolInfo)}
             ${habitsPanel(enabled, student, schoolInfo)}
+            ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
           </main>
         </div>
       </article>
@@ -193,6 +194,7 @@
             ${assessmentGrid(enabled, student, schoolInfo)}
             ${p.renderLegend()}
             <div class="playful-footer">${p.renderFooter(schoolInfo, student)}</div>
+            ${p.renderPageFoot({ page: 2, total: 2 })}
           </main>
         </div>
       </article>`;

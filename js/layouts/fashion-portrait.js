@@ -30,7 +30,7 @@
           <div class="fm-term">
             <strong>${p.escapeHtml(term)}</strong>
             <span>${year || '—'}</span>
-            <span class="mia-page">${pageNum}/${totalPages}</span>
+            <span class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</span>
           </div>
         </div>
         <h1 class="fm-title"><span>MIDTERM</span><span>PROGRESS REPORT</span></h1>
@@ -117,11 +117,10 @@
 
   function continued(schoolInfo, student, pageNum, totalPages) {
     const p = P();
-    const names = p.studentDisplayName(student);
     return `
       <header class="fashion-continued">
-        <span>MIDTERM PROGRESS REPORT / ${p.escapeHtml(p.t('continued'))}</span>
-        <span>${p.escapeHtml(names.en)} / ${p.escapeHtml(student.classGrade || '')} / ${pageNum} of ${totalPages}</span>
+        <span>MIDTERM PROGRESS REPORT — ${p.escapeHtml(p.t('continued'))}</span>
+        ${p.renderStudentMetaLine(student, 'continued-student sheet-meta-line')}
       </header>`;
   }
 
@@ -142,6 +141,7 @@
             ${assessmentList(enabled, student, schoolInfo)}
             ${p.renderLegend()}
             <div class="fashion-footer">${p.renderFooter(schoolInfo, student)}</div>
+            ${p.renderPageFoot({ page: 1, total: 1 })}
           </main>
         </div>
       </article>`;
@@ -154,6 +154,7 @@
           ${meta(schoolInfo, student)}
           ${scoreList(enabled, student, schoolInfo)}
           ${habitMatrix(enabled, student, schoolInfo)}
+          ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
         </main>
       </div>
     </article>
@@ -165,6 +166,7 @@
           ${assessmentList(enabled, student, schoolInfo)}
           ${p.renderLegend()}
           <div class="fashion-footer">${p.renderFooter(schoolInfo, student)}</div>
+          ${p.renderPageFoot({ page: 2, total: 2 })}
         </main>
       </div>
     </article>`;

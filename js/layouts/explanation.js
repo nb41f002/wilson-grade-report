@@ -13,12 +13,13 @@
     return (window.Orientation && window.Orientation.orientation) || 'landscape';
   }
 
-  function renderExplanation(student, schoolInfo) {
+  function renderExplanation(student, schoolInfo, packet = {}) {
     const p = P();
     const theme = liveTheme();
     const orientation = liveOrientation();
+    const packetPage = packet.page || 2;
+    const packetTotal = packet.total || 2;
     const school = p.schoolNames(schoolInfo);
-    const names = p.studentDisplayName(student);
     const mW = schoolInfo?.weights?.midterm ?? 40;
     const dW = schoolInfo?.weights?.daily ?? 60;
     const classical = theme === 'classical';
@@ -80,12 +81,8 @@
           </ul>
         </section>
 
-        <div class="explanation-student-chip">
-          ${p.escapeHtml(names.primary)}
-          ${names.secondary ? ` · ${p.escapeHtml(names.secondary)}` : ''}
-          ${student.classGrade ? ` · ${p.escapeHtml(student.classGrade)}` : ''}
-          ${student.studentId ? ` · ${p.escapeHtml(student.studentId)}` : ''}
-        </div>
+        <div class="explanation-student-chip sheet-meta-line">${p.escapeHtml(p.formatStudentMetaLine(student))}</div>
+        ${p.renderPageFoot({ page: packetPage, total: packetTotal, kind: 'guide' })}
       </div>`;
 
     return `

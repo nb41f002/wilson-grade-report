@@ -16,9 +16,9 @@
       return `
         <aside class="editorial-masthead editorial-masthead-compact">
           <img src="assets/wilson-crest.svg" alt="" class="crest-icon fashion-crest-sm">
-          <div class="ed-report-code">REPORT / 0${pageNum}</div>
-          <div class="ed-student-sm">${p.escapeHtml(names.en)}</div>
-          <div class="mia-page">Page ${pageNum}</div>
+          <div class="ed-report-code">REPORT</div>
+          <div class="ed-student-sm sheet-meta-line">${p.escapeHtml(p.formatStudentMetaLine(student))}</div>
+          <div class="mia-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
         </aside>`;
     }
     return `
@@ -38,7 +38,7 @@
           <strong>${p.escapeHtml(names.primary)}</strong>
           <span>${p.escapeHtml(student.classGrade || '')}</span>
         </div>
-        <div class="ed-mast-page">Page ${pageNum} / ${totalPages}</div>
+        <div class="ed-mast-page">${p.escapeHtml(p.formatPageFoot({ page: pageNum, total: totalPages }))}</div>
         <div class="ed-term-tiny">${p.escapeHtml(term)}</div>
       </aside>`;
   }
@@ -120,6 +120,7 @@
             ${assessments(enabled, student, schoolInfo)}
             ${p.renderLegend()}
             <div class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</div>
+            ${p.renderPageFoot({ page: 1, total: 1 })}
           </main>
         </div>
       </article>`;
@@ -130,6 +131,7 @@
         <main class="editorial-content">
           ${academicRuled(enabled, student, schoolInfo)}
           ${habitsMatrix(enabled, student, schoolInfo)}
+          ${p.renderPageFoot({ page: 1, total: 2, continued: true })}
         </main>
       </div>
     </article>
@@ -140,6 +142,7 @@
           ${assessments(enabled, student, schoolInfo)}
           ${p.renderLegend()}
           <div class="editorial-signatures">${p.renderFooter(schoolInfo, student)}</div>
+          ${p.renderPageFoot({ page: 2, total: 2 })}
         </main>
       </div>
     </article>`;
